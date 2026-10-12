@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record of Daily Treatment & Health Records UI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Titan+One&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @font-face {
+            font-family: 'Etna';
+            src: local('Etna'), local('Etna-Sans'), local('Etna Regular'),
+                 url('https://fonts.cdnfonts.com/s/72120/Etna-Free.woff') format('woff');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Etna', 'Montserrat', sans-serif;
+            background-color: #8faac8;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .canvas-bg { background-color: #91abc9; }
+
+        .navy-card {
+            background-color: #212b5f;
+            border-radius: 26px;
+            box-shadow: 0 16px 36px #737373;
+            position: relative;
+            z-index: 10;
+        }
+
+        .folder-tab-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            margin-bottom: -4px;
+            padding-left: 12px;
+            padding-right: 12px;
+            position: relative;
+            z-index: 15;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .folder-tab-container::-webkit-scrollbar { display: none; }
+
+        .file-tab {
+            position: relative;
+            height: 50px;
+            padding: 0 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            white-space: nowrap;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-bottom: none;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-right: -4px;
+            font-family: 'Etna', 'Montserrat', sans-serif;
+        }
+
+        .file-tab::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -8px; right: -8px; bottom: 0;
+            z-index: -1;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .file-tab:hover {
+            transform: translateY(-4px);
+            z-index: 25 !important;
+            filter: brightness(1.08);
+        }
+
+        .file-tab:active { transform: translateY(-1px); }
+
+        .file-tab.active-tab {
+            height: 48px;
+            z-index: 30 !important;
+            border: 3px solid #ffffff;
+            border-bottom: 4px solid #16234b !important;
+            box-shadow: 0 -8px 18px rgba(0, 0, 0, 0.35), 0 0 14px rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .pill-btn, .pill-select {
+            border-radius: 9999px;
+            height: 60px;
+            padding: 0 20px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            background-color: #000000;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+            border: 2px solid #2d3748;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            font-family: 'Etna', 'Montserrat', sans-serif;
+            letter-spacing: 0.03em;
+        }
+        .pill-btn:hover, .pill-select:hover {
+            transform: translateY(-3px);
+            background-color: #1a1a1a;
+        }
+        .pill-btn.active-tab, .pill-select.active-tab {
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+        }
+
+        .pill-select option { background-color: #16234b; color: #ffffff; font-weight: 800; }
+
+        .filter-select-pill {
+            border-radius: 9999px;
+            background-color: #ffffff;
+            color: #000000;
+            font-weight: 900;
+            border: 2px solid #000000;
+            padding: 4px 16px;
+            height: 38px;
+            cursor: pointer;
+            font-family: 'Etna', 'Montserrat', sans-serif;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tab-g7 { background-color: #00bf63; color: #ffffff; }
+        .tab-g8 { background-color: #f7d441; color: #ffffff; }
+        .tab-g9 { background-color: #ff3131; color: #ffffff; }
+        .tab-g10 { background-color: #004aad; color: #ffffff; }
+        .tab-g11 { background-color: #7642de; color: #ffffff; }
+        .tab-g12 { background-color: #ff6e13; color: #ffffff; }
+        .tab-other { background-color: #00b4d8; color: #ffffff; }
+
+        .pill-input {
+            border-radius: 9999px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+            font-family: 'Etna', 'Montserrat', sans-serif;
+        }
+
+        .date-picker-pill {
+            border-radius: 9999px;
+            background-color: #e5e7eb;
+            color: #000000;
+            font-weight: 900;
+            border: 2px solid #000000;
+            padding: 4px 12px;
+            height: 38px;
+            cursor: pointer;
+        }
+
+        .treatment-table { border-collapse: collapse; border-spacing: 0; width: 100%; }
+        .treatment-table tr { height: 52px; }
+        .treatment-table th {
+            background-color: #1e293b; color: #ffffff; font-weight: 800; font-size: 1.1rem;
+            letter-spacing: 0.04em; padding: 12px 16px; border-right: 2px solid #5d7088;
+            border-bottom: 2px solid #5d7088; text-align: center; text-transform: uppercase;
+        }
+        .treatment-table th:last-child { border-right: none; }
+        .treatment-table td {
+            padding: 8px 12px; font-size: 0.95rem; font-weight: 800; border-right: 2px solid #737373;
+            border-bottom: 2px solid #737373; text-align: center; vertical-align: middle;
+            color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .treatment-table td:last-child { border-right: none; }
+        .treatment-table tbody tr { cursor: pointer; transition: background-color 0.15s ease; }
+        .treatment-table tbody tr:hover { filter: brightness(0.95); }
+        .treatment-table tbody tr.row-incomplete { background-color: #fee2e2 !important; }
+        .treatment-table tbody tr.row-incomplete:hover { background-color: #fecaca !important; }
+        .treatment-table tbody tr:nth-child(even):not(.row-incomplete) { background-color: #d9d9d9; }
+        .treatment-table tbody tr:nth-child(odd):not(.row-incomplete) { background-color: #ffffff; }
+
+        .status-pill {
+            display: inline-block; padding: 3px 12px; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 900; color: #ffffff; text-transform: uppercase;
+        }
+        .status-in { background-color: #22c55e; }
+        .status-out { background-color: #64748b; }
+        .status-incomplete { background-color: #ef4444; }
+        
+        .custom-scrollbar::-webkit-scrollbar-track { background: #cbd5e1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+        .hr-input {
+            background-color: #e5e7eb; border: 2px solid #000000; border-radius: 12px;
+            font-weight: 700; color: #000; padding: 8px 12px; width: 100%; outline: none;
+            transition: border-color 0.2s; font-family: 'Montserrat', sans-serif;
+        }
+        .hr-input:focus { border-color: #3b82f6; }
+        
+        .hr-label {
+            font-size: 0.75rem; font-weight: 900; text-transform: uppercase;
+            color: #1e293b; margin-bottom: 4px; display: block;
+        }
+        
+        .modal-base { transition: opacity 0.2s ease-out; }
+        .modal-content { transition: transform 0.2s ease-out, scale 0.2s ease-out; }
+        
+        .complaint-list { line-height: 1.6; }
+
+        .nurse-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 40;
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .nurse-drawer-backdrop.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nurse-side-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: min(300px, 82vw);
+            height: 100vh;
+            background: #e2e8f0;
+            border-left: 3px solid #0f172a;
+            box-shadow: -12px 0 24px rgba(15, 23, 42, 0.25);
+            z-index: 50;
+            transition: right 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 18px 16px 20px;
+        }
+
+        .nurse-side-drawer.open {
+            right: 0;
+        }
+
+        .nurse-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            color: #0f172a;
+        }
+
+        .nurse-drawer-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .nurse-drawer-close {
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            width: 36px;
+            height: 36px;
+            font-size: 1.45rem;
+            cursor: pointer;
+        }
+
+        .nurse-drawer-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nurse-drawer-item {
+            width: 100%;
+            background: #fff;
+            color: #111827;
+            border: 2px solid #111827;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+        }
+
+        .nurse-drawer-item i {
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body class="p-3 sm:p-6 pt-6 sm:pt-10 min-h-screen flex flex-col items-center justify-start canvas-bg">
+    <script src="database.js"></script>
+    <script>
+        if(typeof window.DB==='undefined'){(function(){var m={students:[],records:[],session:null,seeded:false};window.DB={persistent:false,getStudents:function(){return m.students},saveStudents:function(a){m.students=a},getRecords:function(){return m.records},saveRecords:function(a){m.records=a},getSession:function(){return m.session},setSession:function(o){m.session=o},clearSession:function(){m.session=null},isSeeded:function(){return m.seeded},markSeeded:function(){m.seeded=true}};window.requireLogin=function(){return null}})()}
+        const SESSION=requireLogin();
+    </script>
+
+    <div class="w-full max-w-10xl mx-auto flex flex-col flex-1 pb-6">
+        <!-- Top Controls -->
+        <div class="flex items-end justify-between gap-2 px-1">
+            <div class="folder-tab-container" id="navigationTabs">
+                <button onclick="resetToHome(this)" class="pill-btn active-tab mb-1 mr-1">HOME</button>
+                <select id="categoryDropdown" onchange="handleCategoryChange(this)" class="pill-select mb-1 mr-2 appearance-none pr-8 cursor-pointer relative bg-no-repeat bg-[right_0.75rem_center]">
+                    <option value="GRADE_LEVEL" selected>GRADE LEVEL</option>
+                    <option value="OPEN_HIGH">OPEN HIGH</option>
+                    <option value="SNED">SNED</option>
+                    <option value="ALS">ALS</option>
+                </select>
+                <div id="fileDividerTabs" class="inline-flex items-end"></div>
+            </div>
+            <button class="pill-btn !p-0 !w-10 !h-10 !rounded-full mb-1 text-white hover:bg-slate-900 flex-shrink-0" title="Menu Options" aria-label="Open nurse menu" aria-controls="nurseSideDrawer" aria-expanded="false" onclick="toggleNurseMenu()">
+                <i class="fa-solid fa-list-ul text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Navy Card extended with flex-1 -->
+        <div class="navy-card p-4 sm:p-6 flex-1 flex flex-col">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5 text-white">
+                <div class="relative w-full sm:w-56">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-800 text-base"></i>
+                    <input type="text" id="searchInput" placeholder="" class="w-full pl-10 pr-4 py-1 bg-white text-gray-900 pill-input focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm font-black h-9" onkeyup="renderTable()">
+                </div>
+
+                <div id="dailyTreatmentControls" class="flex items-center gap-2">
+                    <select id="personnelFilter" onchange="renderTable()" class="filter-select-pill text-sm font-black focus:outline-none shadow-md">
+                        <option value="ALL" selected>ALL RECORDS</option>
+                        <option value="STUDENT">STUDENTS</option>
+                        <option value="TEACHING">TEACHING PERSONNEL</option>
+                        <option value="NON_TEACHING">NON-TEACHING PERSONNEL</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="date-picker-pill text-sm font-black focus:outline-none shadow-md" onchange="renderTable()">
+                    <button onclick="resetDateFilter()" class="bg-white text-black font-extrabold px-3 py-1 rounded-full text-xs hover:bg-gray-200 border-2 border-black h-9 shadow-md whitespace-nowrap">Reset Dates</button>
+                </div>
+
+                <div id="healthRecordControls" class="hidden items-center">
+                    <select id="healthStatusFilter" onchange="renderTable()" class="filter-select-pill text-sm font-black focus:outline-none shadow-md">
+                        <option value="Active" selected>ACTIVE</option>
+                        <option value="Inactive">INACTIVE</option>
+                        <option value="ALL">ALL STATUS</option>
+                    </select>
+                </div>
+
+                <h1 id="mainTitle" class="text-xl sm:text-2xl md:text-3xl font-black tracking-wider text-center uppercase flex-1 min-w-[260px] px-2 text-white drop-shadow-md">RECORD OF DAILY TREATMENT</h1>
+
+                <button onclick="openMasterModal()" class="pill-btn bg-white text-slate-950 font-black hover:bg-gray-100 flex items-center gap-2 h-9 px-4 border-2 border-slate-300">
+                    <i class="fa-solid fa-plus text-base font-black"></i> <span id="masterAddBtnText">ADD RECORD</span>
+                </button>
+            </div>
+
+            <!-- Table Container dynamically stretching -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-2xl border-2 border-slate-700 flex-1 flex flex-col">
+                <div class="overflow-x-auto custom-scrollbar flex-1">
+                    <table class="treatment-table">
+                        <thead id="tableHeader" class="sticky top-0 z-10"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <div id="tableFiller" class="table-empty-fill w-full"></div>
+            </div>
+
+            <div id="noResults" class="hidden text-center py-10 text-gray-300 font-bold text-lg">
+                <i class="fa-solid fa-folder-open text-4xl mb-2 text-gray-400 block"></i>
+                No records match your search query.
+            </div>
+
+            <div class="mt-3 flex justify-between items-center text-xs text-gray-300 font-bold px-2">
+                <span id="recordCounter">Showing 0 entries</span>
+                <span id="activeFilterBadge" class="bg-slate-900 px-3 py-1 rounded-full text-amber-400 border border-slate-700">Filter: All Records</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="nurseDrawerBackdrop" class="nurse-drawer-backdrop hidden" onclick="toggleNurseMenu(false)"></div>
+    <aside id="nurseSideDrawer" class="nurse-side-drawer" aria-label="Nurse menu" aria-hidden="true">
+        <div class="nurse-drawer-header">
+            <h2 class="nurse-drawer-title">Menu</h2>
+            <button class="nurse-drawer-close" type="button" aria-label="Close menu" onclick="toggleNurseMenu(false)">&times;</button>
+        </div>
+        <div class="nurse-drawer-menu">
+            <button class="nurse-drawer-item" type="button" id="nurseLogoutBtn" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 1. Daily Treatment Add Modal -->
+    <div id="dailyTreatmentModal" class="modal-base fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden items-center justify-center z-[100] p-4 opacity-0">
+        <div class="modal-content bg-slate-900 text-white rounded-3xl max-w-lg w-full border-4 border-slate-800 shadow-2xl overflow-hidden transform scale-95">
+            <div class="bg-slate-950 px-6 py-4 flex justify-between items-center border-b border-slate-800">
+                <h2 class="text-xl font-extrabold text-amber-400 flex items-center gap-2"><i class="fa-solid fa-file-medical"></i> Add Daily Treatment Record</h2>
+                <button onclick="closeModal('dailyTreatmentModal')" class="text-gray-400 hover:text-white text-2xl font-black">&times;</button>
+            </div>
+            <form id="recordForm" onsubmit="handleDailySubmit(event)" class="p-6 space-y-4">
+                
+                <!-- NAME FIELD MOVED TO THE TOP AS SEARCH BAR -->
+                <div class="relative">
+                    <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Name <span class="text-red-500">*</span></label>
+                    <input type="text" id="formName" required autocomplete="off" placeholder="Type surname" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400 placeholder-gray-500" oninput="handleStudentNameInput(this.value)">
+                    <div id="studentSearchResults" class="absolute left-0 right-0 bg-slate-800 border border-slate-700 rounded-xl mt-1 hidden max-h-40 overflow-y-auto z-50 shadow-2xl"></div>
+                    <!-- Hidden field to link the treatment explicitly to a student profile -->
+                    <input type="hidden" id="formStudentId">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Personnel / Entity Type</label>
+                        <select id="formEntityType" onchange="handleEntityTypeChange()" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                            <option value="STUDENT" selected>Student</option>
+                            <option value="TEACHING">Teaching Personnel</option>
+                            <option value="NON_TEACHING">Non-Teaching Personnel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Date <span class="text-red-500">*</span></label>
+                        <input type="date" id="formDate" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400" style="color-scheme: dark;">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2">
+                    <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Time In <span class="text-red-500">*</span></label><input type="text" id="formTimeIn" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400"></div>
+                    <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Time Out</label><input type="text" id="formTimeOut" placeholder="—" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400"></div>
+                    <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Status</label><select id="formStatus" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400"><option value="IN" selected>IN</option><option value="OUT">OUT</option></select></div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Age & Sex <span class="text-red-500">*</span></label><input type="text" id="formAgeSex" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400 placeholder-gray-500" placeholder=""></div>
+                    <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Grade & Sec / Position <span class="text-red-500">*</span></label><input type="text" id="formGradeSection" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400 placeholder-gray-500" placeholder=""></div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 items-start">
+                    <div id="complaintContainer">
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Chief Complaint <span class="text-red-500">*</span></label>
+                        <div class="flex gap-2 mb-2 complaint-row">
+                            <input type="text" name="complaintInput" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                            <button type="button" onclick="addComplaintField()" class="px-3 py-2 bg-amber-400 text-slate-900 rounded-xl font-black shadow-md hover:bg-amber-300 w-11 shrink-0 flex items-center justify-center transition-all" title="Add another complaint"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div id="interventionContainer">
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Intervention / Treatment <span class="text-red-500">*</span></label>
+                        <div class="flex gap-2 mb-2 intervention-row">
+                            <input type="text" name="interventionInput" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                            <button type="button" onclick="addInterventionField()" class="px-3 py-2 bg-amber-400 text-slate-900 rounded-xl font-black shadow-md hover:bg-amber-300 w-11 shrink-0 flex items-center justify-center transition-all" title="Add another intervention"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Parent / Emergency Contact <span class="text-red-500">*</span></label><input type="text" id="formParent" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400 placeholder-gray-500" placeholder=""></div>
+                
+                <div><label class="block text-xs font-bold uppercase mb-1 text-slate-300">Remarks</label><input type="text" id="formRemarks" value="None" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400"></div>
+                
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeModal('dailyTreatmentModal')" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 font-bold text-sm">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm shadow-md">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 1.B View Record Modal for Daily Treatment -->
+    <div id="viewTreatmentModal" class="modal-base fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-[110] p-4 opacity-0">
+        <div class="modal-content bg-white text-slate-900 rounded-[20px] max-w-4xl w-full border-4 border-slate-200 shadow-2xl p-6 font-montserrat flex flex-col gap-4">
+            <h2 id="vt_name" class="text-2xl font-black text-[#1e293b] uppercase tracking-wider border-b-2 border-gray-200 pb-2">Student Name</h2>
+            
+            <div class="flex items-center gap-3 text-sm font-bold text-gray-700 mb-2">
+                <span id="vt_date" class="bg-gray-100 px-3 py-1 rounded-lg"></span> •
+                <span id="vt_time"></span> •
+                <span id="vt_status" class="status-pill text-[10px]"></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
+                <div><span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Age & Sex</span><span id="vt_agesex" class="font-extrabold text-gray-800"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Grade & Section</span><span id="vt_gradesec" class="font-extrabold text-gray-800"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Entity Type</span><span id="vt_entity" class="font-extrabold text-gray-800"></span></div>
+                <div><span class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Parent/Emergency Contact</span><span id="vt_parent" class="font-extrabold text-gray-800"></span></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex flex-col">
+                    <span class="block text-[10px] uppercase font-black text-blue-800 mb-2">Chief Complaint</span>
+                    <div id="vt_complaint" class="font-bold text-slate-800 text-sm complaint-list pl-2 flex-1"></div>
+                    
+                    <div class="mt-4 pt-4 border-t border-blue-200 flex gap-2 shrink-0">
+                        <input type="text" id="vt_add_complaint_input" placeholder="Add another complaint..." class="hr-input flex-1 py-1.5 text-sm">
+                        <button type="button" onclick="appendComplaintToView()" class="bg-black hover:bg-slate-800 text-white font-black px-4 py-1.5 rounded-xl text-sm shadow-md whitespace-nowrap">Add</button>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 flex flex-col">
+                    <span class="block text-[10px] uppercase font-black text-gray-500 mb-2">Intervention / Treatment</span>
+                    <div id="vt_treatment" class="font-bold text-slate-800 text-sm complaint-list pl-2 flex-1"></div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-200 flex gap-2 shrink-0">
+                        <input type="text" id="vt_add_treatment_input" placeholder="Add another intervention..." class="hr-input flex-1 py-1.5 text-sm bg-white">
+                        <button type="button" onclick="appendTreatmentToView()" class="bg-black hover:bg-slate-800 text-white font-black px-4 py-1.5 rounded-xl text-sm shadow-md whitespace-nowrap">Add</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-2">
+                <span class="block text-[10px] uppercase font-black text-gray-500 mb-1">Remarks</span>
+                <!-- User can now edit the remarks here directly -->
+                <input type="text" id="vt_remarks_input" class="w-full bg-transparent border-b border-gray-300 focus:border-blue-500 outline-none font-bold text-slate-800 text-sm pb-1 transition-colors" oninput="updateTreatmentRemarks(this.value)">
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-200">
+                <button type="button" onclick="deleteTreatmentRecord()" class="bg-red-100 hover:bg-red-200 text-red-700 border-2 border-red-700 font-black px-5 py-2 rounded-xl text-sm shadow-sm"><i class="fa-solid fa-trash-can mr-2" aria-hidden="true"></i>DELETE RECORD</button>
+                <div class="flex justify-end gap-3 ml-auto">
+                    <button type="button" onclick="closeModal('viewTreatmentModal')" class="bg-white border-2 border-black hover:bg-gray-100 text-black font-black px-6 py-2 rounded-xl text-sm shadow-sm">Close</button>
+                    <button type="button" id="vt_timeout_btn" onclick="executeTimeOut()" class="bg-red-600 hover:bg-red-700 text-white font-black px-6 py-2 rounded-xl text-sm shadow-md transition-colors">TIME OUT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Choose Existing Record Modal (Health Flow Step 1) -->
+    <div id="chooseExistingModal" class="modal-base fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-[110] p-4 opacity-0">
+        <div class="modal-content bg-white text-slate-900 rounded-[20px] max-w-4xl w-full border-4 border-slate-200 shadow-2xl overflow-hidden transform scale-95 p-6 font-montserrat">
+            <h2 id="chooseExistingTitle" class="text-2xl font-black text-[#1e293b] mb-4 uppercase tracking-wider">CHOOSE EXISTING RECORD</h2>
+            <div class="flex gap-4 mb-4">
+                <input type="text" placeholder="Search name or LRN" class="flex-1 hr-input text-lg">
+                <button type="button" onclick="openAddNewCardModal()" class="bg-black hover:bg-slate-800 text-white font-black px-6 py-3 rounded-xl uppercase text-sm tracking-widest shadow-md whitespace-nowrap">NEW RECORD</button>
+            </div>
+            <div class="border-2 border-slate-500 rounded-xl overflow-hidden mb-6">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-[#1e293b] text-white">
+                            <th class="p-3 border-r border-slate-500 font-black text-center w-1/2">NAME</th>
+                            <th class="p-3 font-black text-center w-1/2">LRN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="2" class="p-4 text-center font-bold text-gray-700 bg-white">No previous grade — use New Record</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" onclick="closeModal('chooseExistingModal')" class="bg-white border-2 border-black hover:bg-gray-100 text-black font-black px-6 py-2 rounded-xl text-sm shadow-sm">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Add New Card Modal (Health Flow Step 2) -->
+    <div id="addNewCardModal" class="modal-base fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-[120] p-4 opacity-0">
+        <div class="modal-content bg-white text-slate-900 rounded-[20px] max-w-5xl w-full border-4 border-slate-200 shadow-2xl overflow-hidden transform scale-95 p-6 font-montserrat">
+            <h2 id="addNewCardTitle" class="text-2xl font-black text-[#1e293b] mb-6 uppercase tracking-wider">ADD NEW CARD</h2>
+            <form id="newCardForm" onsubmit="handleNewCardSubmit(event)">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <div><label class="hr-label">LAST <span class="text-red-500">*</span></label><input type="text" id="nc_last" required class="hr-input"></div>
+                    <div><label class="hr-label">FIRST <span class="text-red-500">*</span></label><input type="text" id="nc_first" required class="hr-input"></div>
+                    <div><label class="hr-label">MIDDLE</label><input type="text" id="nc_middle" class="hr-input"></div>
+                    <div><label class="hr-label">SEX <span class="text-red-500">*</span></label><select id="nc_sex" required class="hr-input bg-white appearance-none cursor-pointer"><option value="M">M</option><option value="F">F</option></select></div>
+                    <div><label class="hr-label">SECTION <span class="text-red-500">*</span></label><input type="text" id="nc_section" required class="hr-input"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <div><label class="hr-label">PROGRAM <span class="text-red-500">*</span></label>
+                        <select id="nc_program" required class="hr-input bg-white appearance-none cursor-pointer text-blue-700 border-blue-400">
+                            <option value="Regular Education">Regular Education</option>
+                            <option value="Open High">Open High</option>
+                            <option value="SNED">SNED</option>
+                            <option value="ALS">ALS</option>
+                        </select>
+                    </div>
+                    <div><label class="hr-label">BIRTHDAY <span class="text-red-500">*</span></label><input type="date" id="nc_birthday" required class="hr-input bg-white text-gray-600"></div>
+                    <div><label class="hr-label">TELEPHONE NO.</label><input type="text" id="nc_telephone" class="hr-input" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                    <div><label class="hr-label">DIVISION</label><input type="text" id="nc_division" class="hr-input"></div>
+                    <div><label class="hr-label">RELIGION</label><input type="text" id="nc_religion" class="hr-input"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div><label class="hr-label">BIRTHPLACE</label><input type="text" id="nc_birthplace" class="hr-input"></div>
+                    <div><label class="hr-label">PARENT/GUARDIAN <span class="text-red-500">*</span></label><input type="text" id="nc_parent" required class="hr-input"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div><label class="hr-label">ADDRESS <span class="text-red-500">*</span></label><input type="text" id="nc_address" required class="hr-input"></div>
+                    <div><label class="hr-label">SCHOOL <span class="text-red-500">*</span></label><input type="text" id="nc_school" value="Pasay City South High School" required class="hr-input bg-gray-200"></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" onclick="closeModal('addNewCardModal')" class="bg-white border-2 border-black hover:bg-gray-100 text-black font-black px-6 py-2 rounded-xl text-sm shadow-sm">Cancel</button>
+                    <button type="submit" class="bg-black hover:bg-slate-800 text-white font-black px-8 py-2 rounded-xl text-sm shadow-md">Done</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Confirmation Modal (Health Flow Step 3) -->
+    <div id="confirmModal" class="modal-base fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-[130] p-4 opacity-0">
+        <div class="modal-content bg-white text-slate-900 rounded-[20px] max-w-sm w-full border-4 border-slate-200 shadow-2xl p-6 text-center">
+            <i class="fa-solid fa-circle-question text-4xl text-blue-500 mb-4"></i>
+            <h3 class="text-xl font-black mb-6 font-montserrat">Confirm the new student "<span id="confirmNameDisplay" class="text-blue-700"></span>"?</h3>
+            <div class="flex justify-center gap-4">
+                <button type="button" onclick="closeModal('confirmModal')" class="bg-white border-2 border-black hover:bg-gray-100 text-black font-black px-6 py-2 rounded-xl text-sm w-full">CANCEL</button>
+                <button type="button" onclick="proceedToHealthExam()" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-2 rounded-xl text-sm w-full">YES</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Health Exam Card Modal (Health Flow Step 4 / Edit) -->
+    <div id="healthExamModal" class="modal-base fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-[140] p-2 sm:p-4 opacity-0">
+        <!-- Added mb-6 to leave 1/2 inch bottom padding similar to the main UI -->
+        <div class="modal-content bg-[#f1f5f9] text-slate-900 rounded-[20px] max-w-[1200px] w-full h-[calc(100vh-3rem)] mb-6 flex flex-col border-4 border-slate-300 shadow-2xl overflow-hidden transform scale-95 font-montserrat">
+            
+            <div class="bg-[#1e293b] px-6 py-4 flex justify-between items-center text-white shrink-0">
+                <h2 class="text-xl font-black uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-notes-medical text-green-400"></i> School Health Record
+                </h2>
+            </div>
+
+            <!-- Scrollable Form Area -->
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 bg-[#f8fafc]">
+                
+                <!-- Dynamic Header Block (Student Details Summary) with School Year Buttons -->
+                <div class="bg-blue-50 border-2 border-blue-200 p-4 rounded-xl mb-6 shadow-sm">
+                    <div class="flex flex-wrap justify-between items-center mb-4 border-b border-blue-200 pb-2 gap-2">
+                        <h3 class="text-lg font-black text-blue-900 uppercase">Student Details</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-extrabold text-blue-800 uppercase">School Year:</span>
+                            <div id="syButtonsContainer" class="flex items-center gap-1.5">
+                                <!-- SY 2026-2027 button -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-2 text-sm text-blue-900">
+                        <div><span class="font-bold block text-[10px] uppercase opacity-70">Name</span><span id="he_display_name" class="font-bold text-sm"></span></div>
+                        <div><span class="font-bold block text-[10px] uppercase opacity-70">Program</span><span id="he_display_program" class="font-bold text-sm"></span></div>
+                        <div><span class="font-bold block text-[10px] uppercase opacity-70">Sex</span><span id="he_display_sex" class="font-bold text-sm"></span></div>
+                        <div><span class="font-bold block text-[10px] uppercase opacity-70">Section</span><span id="he_display_section" class="font-bold text-sm"></span></div>
+                        <div class="detail-optional-field"><span class="font-bold block text-[10px] uppercase opacity-70">Birthday</span><span id="he_display_birthday" class="font-bold text-sm"></span></div>
+                        <div class="detail-optional-field"><span class="font-bold block text-[10px] uppercase opacity-70">Telephone</span><span id="he_display_telephone" class="font-bold text-sm"></span></div>
+                        <div class="detail-optional-field"><span class="font-bold block text-[10px] uppercase opacity-70">Religion</span><span id="he_display_religion" class="font-bold text-sm"></span></div>
+                        <div><span class="font-bold block text-[10px] uppercase opacity-70">Parent/Guardian</span><span id="he_display_parent" class="font-bold text-sm"></span></div>
+                        <div class="md:col-span-2 detail-optional-field"><span class="font-bold block text-[10px] uppercase opacity-70">Address</span><span id="he_display_address" class="font-bold text-sm truncate block" title=""></span></div>
+                        <div class="md:col-span-2 detail-optional-field"><span class="font-bold block text-[10px] uppercase opacity-70">School</span><span id="he_display_school" class="font-bold text-sm"></span></div>
+                    </div>
+                </div>
+
+                <form id="healthExamForm" onsubmit="handleHealthExamSubmit(event)">
+                    
+                    <!-- Part I: Physical Examination -->
+                    <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm mb-6">
+                        <h3 class="font-black text-lg border-b-2 border-gray-200 pb-4 mb-4 uppercase">Part I: Physical Examination</h3>
+                        
+                        <!-- ALIGNED 6-COLUMN VITALS GRID with Uniform Label Containers -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 bg-gray-100 p-4 border border-gray-300 rounded-xl mb-6 shadow-inner items-start">
+                            <div class="flex flex-col justify-between h-full">
+                                <label class="hr-label h-8 flex items-center justify-between">Date of Exam <span class="text-red-500">*</span></label>
+                                <input type="date" id="v_examDate" required class="hr-input he-input bg-white text-sm py-1.5 w-full border-gray-300 focus:border-red-400" oninput="autoSaveCurrentRecord()">
+                            </div>
+                            <div class="flex flex-col justify-between h-full">
+                                <label class="hr-label h-8 flex items-center justify-between">Temperature <span class="text-red-500">*</span></label>
+                                <input type="text" id="v_temp" placeholder="°C" required class="hr-input he-input bg-white text-sm py-1.5 w-full border-gray-300 focus:border-red-400" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); autoSaveCurrentRecord()">
+                            </div>
+                            <div class="flex flex-col justify-between h-full">
+                                <label class="hr-label h-8 flex items-center justify-between">Blood Pressure <span class="text-red-500">*</span></label>
+                                <input type="text" id="v_bp" placeholder="mmHg" required class="hr-input he-input bg-white text-sm py-1.5 w-full border-gray-300 focus:border-red-400" oninput="this.value = this.value.replace(/[^0-9/]/g, ''); autoSaveCurrentRecord()">
+                            </div>
+                            <div class="flex flex-col justify-between h-full">
+                                <label class="hr-label h-8 flex items-center justify-between">Heart/Pulse/Resp Rate <span class="text-red-500">*</span></label>
+                                <input type="text" id="v_rate" placeholder="Rate" required class="hr-input he-input bg-white text-sm py-1.5 w-full border-gray-300 focus:border-red-400" oninput="this.value = this.value.replace(/[^0-9/]/g, ''); autoSaveCurrentRecord()">
+                            </div>
+                            <div class="flex flex-col justify-between h-full">
+                                <label class="hr-label h-8 flex items-center justify-between">Height (cm) <span class="text-red-500">*</span></label>
+                                <input type="text" id="v_height" placeholder="cm" required class="hr-input he-input bg-white text-sm py-1.5 w-full border-gray-300 focus:border-red-400" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); autoSaveCurrentRecord()">
+                            </div>
+                            <div class="flex flex-col justify-between h-full">
+                                <label class="hr-label h-8 flex items-center justify-between">Weight (kg) <span class="text-red-500">*</span></label>
+                                <input type="text" id="v_weight" placeholder="kg" required class="hr-input he-input bg-white text-sm py-1.5 w-full border-gray-300 focus:border-red-400" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); autoSaveCurrentRecord()">
+                            </div>
+                        </div>
+
+                        <!-- Findings Multiple Dropdown Grid -->
+                        <label class="hr-label mb-2 text-sm tracking-wide">Findings Grid (Click to open checklist)</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 text-sm relative z-20">
+                            
+                            <!-- Custom Multiple Dropdowns -->
+                            <div class="custom-multiselect relative z-[59]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Nutritional Status <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-ns')">
+                                    <span id="ms-ns-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-ns" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal" class="he-input he-ms-ns w-4 h-4" onchange="updateCustomMS('ns')"> Normal</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Below Normal" class="he-input he-ms-ns w-4 h-4" onchange="updateCustomMS('ns')"> Below Normal</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Above Normal" class="he-input he-ms-ns w-4 h-4" onchange="updateCustomMS('ns')"> Above Normal</label>
+                                </div>
+                                <input type="text" id="req_ms_ns" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[58]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Visual Acuity <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-va')">
+                                    <span id="ms-va-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-va" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="N Rt" class="he-input he-ms-va w-4 h-4" onchange="updateCustomMS('va')"> N Rt</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="N Lft" class="he-input he-ms-va w-4 h-4" onchange="updateCustomMS('va')"> N Lft</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="AbN Rt" class="he-input he-ms-va w-4 h-4" onchange="updateCustomMS('va')"> AbN Rt</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="AbN Lft" class="he-input he-ms-va w-4 h-4" onchange="updateCustomMS('va')"> AbN Lft</label>
+                                </div>
+                                <input type="text" id="req_ms_va" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[57]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Hearing <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-hear')">
+                                    <span id="ms-hear-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-hear" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="N Rt" class="he-input he-ms-hear w-4 h-4" onchange="updateCustomMS('hear')"> N Rt</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="N Lft" class="he-input he-ms-hear w-4 h-4" onchange="updateCustomMS('hear')"> N Lft</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="AbN Rt" class="he-input he-ms-hear w-4 h-4" onchange="updateCustomMS('hear')"> AbN Rt</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="AbN Lft" class="he-input he-ms-hear w-4 h-4" onchange="updateCustomMS('hear')"> AbN Lft</label>
+                                </div>
+                                <input type="text" id="req_ms_hear" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[56]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Skin/Scalp <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-skin')">
+                                    <span id="ms-skin-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-skin" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Normal</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Pediculosis" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Pediculosis</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Tinea flava" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Tinea flava</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Ringworm" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Ringworm</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Eczema" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Eczema</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Impetigo/boil" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Impetigo/boil</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Hematoma" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Hematoma</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Bruises" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Bruises</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Cuts/lacerations" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Cuts/lacerations</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Allergy" class="he-input he-ms-skin w-4 h-4" onchange="updateCustomMS('skin')"> Allergy</label>
+                                </div>
+                                <input type="text" id="req_ms_skin" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[55]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Eye/Ear/Nose <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-eye')">
+                                    <span id="ms-eye-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-eye" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal eye" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Normal eye</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal Ears" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Normal Ears</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal nose" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Normal nose</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Squinting" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Squinting</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Pale conjunctivae" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Pale conjunctivae</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Ear discharge" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Ear discharge</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Impacted cerumen" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Impacted cerumen</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Septal deviation" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Septal deviation</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Nasal discharge" class="he-input he-ms-eye w-4 h-4" onchange="updateCustomMS('eye')"> Nasal discharge</label>
+                                </div>
+                                <input type="text" id="req_ms_eye" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[54]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Mouth/Throat <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-mouth')">
+                                    <span id="ms-mouth-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-mouth" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal mouth" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Normal mouth</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal throat" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Normal throat</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Enlarged tonsils" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Enlarged tonsils w/ w/o exudates</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Lip lesion" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Lip lesion</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Inflamed pharynx" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Inflamed pharynx w/ w/o exudates</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Enlarged thyroid" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Enlarged thyroid gland</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Speech defect" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Speech defect</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Dental problem" class="he-input he-ms-mouth w-4 h-4" onchange="updateCustomMS('mouth')"> Dental problem</label>
+                                </div>
+                                <input type="text" id="req_ms_mouth" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[53]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Lungs/Heart <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-lungs')">
+                                    <span id="ms-lungs-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-lungs" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal Lungs" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Normal Lungs</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal heart" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Normal heart</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Rales" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Rales</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Wheeze" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Wheeze</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Murmur" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Murmur</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Deformed chest" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Deformed chest</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Distant heart sounds" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Distant heart sounds</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Irregular heart rate" class="he-input he-ms-lungs w-4 h-4" onchange="updateCustomMS('lungs')"> Irregular heart rate</label>
+                                </div>
+                                <input type="text" id="req_ms_lungs" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[52]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Abdomen/Genitalia <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-abdomen')">
+                                    <span id="ms-abdomen-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-abdomen" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal Abdomen" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Normal Abdomen</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal Genitalia" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Normal Genitalia</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Mass" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Mass</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Hemorrhoids" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Hemorrhoids</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Tenderness" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Tenderness</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Genital Discharge" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Genital Discharge</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Hernia" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Hernia</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700 text-blue-600"><input type="checkbox" value="Others" class="he-input he-ms-abdomen w-4 h-4" onchange="updateCustomMS('abdomen')"> Others</label>
+                                </div>
+                                <input type="text" id="ms-abdomen-others" class="hr-input he-input mt-1 py-1 text-xs hidden border-blue-300 bg-blue-50 focus:border-blue-500" placeholder="Specify other...">
+                                <input type="text" id="req_ms_abdomen" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="custom-multiselect relative z-[51]">
+                                <span class="font-bold text-center bg-[#1e293b] text-white py-1 rounded-t-lg text-xs block">Spine/Extremities <span class="text-red-500">*</span></span>
+                                <div class="hr-input he-input bg-white text-sm py-1.5 cursor-pointer flex flex-wrap gap-1 min-h-[36px] items-center border-t-0 rounded-t-none" onclick="toggleCustomMS('ms-spine')">
+                                    <span id="ms-spine-label" class="text-gray-400">Select...</span>
+                                </div>
+                                <div id="ms-spine" class="ms-dropdown absolute left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-xl hidden max-h-48 overflow-y-auto mt-1 p-2">
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Normal Spine" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Normal Spine</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="N Upper Extremities" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> N Upper Extremities</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="N Lower Extremities" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> N Lower Extremities</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Scoliosis" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Scoliosis</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Lordosis" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Lordosis</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Kyphosis" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Kyphosis</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Bowlegs/knock knees" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Bowlegs/knock knees</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Flat foot" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Flat foot</label>
+                                    <label class="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded cursor-pointer text-sm font-bold text-gray-700"><input type="checkbox" value="Club foot" class="he-input he-ms-spine w-4 h-4" onchange="updateCustomMS('spine')"> Club foot</label>
+                                </div>
+                                <input type="text" id="req_ms_spine" required class="absolute bottom-0 left-1/2 w-0 h-0 opacity-0 z-[-1]" oninvalid="this.setCustomValidity('Please select at least one option.')" oninput="this.setCustomValidity('')">
+                            </div>
+                        </div>
+
+                        <!-- Others & Examined By Appendage -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                            <div><label class="hr-label">Others, Specify</label><input type="text" id="v_others" class="hr-input he-input bg-gray-50 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                            <div><label class="hr-label flex items-center justify-between">Examined By <span class="text-red-500">*</span></label><input type="text" id="v_examinedBy" required class="hr-input he-input bg-gray-50 border-gray-300 focus:border-red-400" oninput="autoSaveCurrentRecord()"></div>
+                        </div>
+                    </div>
+
+                    <!-- Part II: Family Background & Medical History -->
+                    <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm mb-6 relative z-0">
+                        <div class="border-b-2 border-gray-200 pb-2 mb-4">
+                            <h3 class="font-black text-lg uppercase">Part II: Family Background & Medical History</h3>
+                        </div>
+
+                        <!-- Sub-Section: Family Background -->
+                        <div class="mb-8">
+                            <h4 class="font-bold text-md text-gray-700 mb-3 uppercase">Family Background</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <div class="md:col-span-1">
+                                    <label class="hr-label mb-2 flex items-center justify-between">Occupation of Parent/Guardian <span class="text-red-500">*</span></label>
+                                    <input type="text" id="he_occupation" required class="hr-input he-input bg-white border-gray-300 mb-4 focus:border-red-400" placeholder="Occupation..." oninput="autoSaveCurrentRecord()">
+                                    
+                                    <label class="hr-label flex items-center justify-between">Living Condition <span class="text-red-500">*</span></label>
+                                    <select id="he_living_condition" required class="hr-input he-input bg-white border-gray-300 focus:border-red-400" onchange="toggleLivingCondition(); autoSaveCurrentRecord();">
+                                        <option value="" disabled selected>Select condition...</option>
+                                        <option value="Orphan">Orphan (both parents deceased)</option>
+                                        <option value="Both">Living with both parents</option>
+                                        <option value="One">Living with one parent</option>
+                                        <option value="Guardian">Living with Guardian</option>
+                                    </select>
+                                    <input type="text" id="he_living_one_parent" placeholder="Mother / Father?" class="hr-input he-input bg-white border-gray-300 mt-2 text-sm hidden" oninput="autoSaveCurrentRecord()">
+                                    <input type="text" id="he_living_guardian" placeholder="Specify relationship" class="hr-input he-input bg-white border-gray-300 mt-2 text-sm hidden" oninput="autoSaveCurrentRecord()">
+                                </div>
+                                <div class="md:col-span-1 grid grid-cols-1 gap-2">
+                                    <div><label class="hr-label flex items-center justify-between">No. of household members <span class="text-red-500">*</span></label><input type="number" id="he_members" required min="0" oninput="validateFamilyOrder(); autoSaveCurrentRecord();" class="hr-input he-input bg-white border-gray-300 focus:border-red-400"></div>
+                                    <div><label class="hr-label flex items-center justify-between">No. of siblings <span class="text-red-500">*</span></label><input type="number" id="he_siblings" required min="0" oninput="validateFamilyOrder(); autoSaveCurrentRecord();" class="hr-input he-input bg-white border-gray-300 focus:border-red-400"></div>
+                                    <div><label class="hr-label flex items-center justify-between">Order in the Family <span class="text-red-500">*</span></label><input type="number" id="he_order" required min="1" oninput="validateFamilyOrder(); autoSaveCurrentRecord();" class="hr-input he-input bg-white border-gray-300 focus:border-red-400"></div>
+                                </div>
+                                <div class="md:col-span-2 flex flex-col justify-center gap-4 pl-0 md:pl-4 border-l-0 md:border-l border-gray-200">
+                                    <label class="flex items-center gap-3 font-bold text-sm text-gray-700 cursor-pointer"><input type="checkbox" id="he_smoker" class="he-input w-5 h-5 cursor-pointer" onchange="autoSaveCurrentRecord()"> Is there a smoker in the family?</label>
+                                    <label class="flex items-center gap-3 font-bold text-sm text-gray-700 cursor-pointer"><input type="checkbox" id="he_alcohol" class="he-input w-5 h-5 cursor-pointer" onchange="autoSaveCurrentRecord()"> Is there an alcohol drinker?</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sub-Section: Family History -->
+                        <div class="mb-8 border-t border-gray-200 pt-6">
+                            <div class="flex justify-between items-end mb-3">
+                                <h4 class="font-bold text-md text-gray-700 uppercase">Family History</h4>
+                                <span class="text-xs text-red-600 font-bold bg-red-50 px-2 py-1 rounded">If YES specify relationship. If NO leave blank.</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3 text-sm font-semibold text-gray-700">
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Cancer</span> <input type="text" id="fh_cancer" placeholder="Relationship (leave blank if NO)" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Heart Problem</span> <input type="text" id="fh_heart" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">High Blood</span> <input type="text" id="fh_highblood" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Diabetes</span> <input type="text" id="fh_diabetes" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Tuberculosis</span> <input type="text" id="fh_tb" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Asthma</span> <input type="text" id="fh_asthma" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Bleeding Tendencies</span> <input type="text" id="fh_bleeding" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-1"><span class="w-1/2">Mental Trouble</span> <input type="text" id="fh_mental" placeholder="Relationship" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div class="col-span-1 md:col-span-2 lg:col-span-3 flex items-center justify-between gap-2 border-b pb-1 mt-2">
+                                    <span class="whitespace-nowrap font-bold text-gray-700">Others, please specify:</span>
+                                    <input type="text" id="fh_others" class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300" oninput="autoSaveCurrentRecord()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sub-Section: Past Medical History Checkbox Grid WITH DYNAMIC SPECIFY FIELDS -->
+                        <div class="mb-8 border-t border-gray-200 pt-6">
+                            <h4 class="font-bold text-md text-gray-700 uppercase mb-4">Past Medical History (Check if Yes & Specify Details)</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3 text-xs font-bold text-gray-700" id="pastMedicalGrid">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Special Medications Box (Open Ended) -->
+                        <div class="bg-gray-50 border border-gray-300 rounded-lg p-4 mt-6">
+                            <p class="text-xs text-red-600 font-bold mb-3 uppercase tracking-wider">If yes specify, if no leave null</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="hr-label">Any special MEDICATIONS?</label><input type="text" id="sm_meds" class="hr-input he-input bg-white text-sm py-1.5 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div><label class="hr-label">Allergy to MEDICINES?</label><input type="text" id="sm_allergy" class="hr-input he-input bg-white text-sm py-1.5 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div><label class="hr-label">Requires SPECIAL CARE?</label><input type="text" id="sm_care" class="hr-input he-input bg-white text-sm py-1.5 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                                <div><label class="hr-label">OTHERS</label><input type="text" id="sm_others" class="hr-input he-input bg-white text-sm py-1.5 border-gray-300" oninput="autoSaveCurrentRecord()"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Immunization History -->
+                    <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm mb-6">
+                        <h3 class="font-black text-lg border-b-2 border-gray-200 pb-2 mb-4 uppercase">Immunization History</h3>
+                        <!-- Strict 2-Column Layout -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2 text-sm font-bold text-gray-700">
+                            <!-- Left Column -->
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>BCG</span> <input type="date" id="im_bcg" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>DPT/OPV 1</span> <input type="date" id="im_dpt1" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>DPT/OPV 2</span> <input type="date" id="im_dpt2" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>DPT/OPV 3</span> <input type="date" id="im_dpt3" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>DPT/OPV BOOSTER 1</span> <input type="date" id="im_dptb1" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>DPT/OPV BOOSTER 2</span> <input type="date" id="im_dptb2" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>DT</span> <input type="date" id="im_dt" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hemophilus Influenza 1</span> <input type="date" id="im_hib1" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hemophilus Influenza 2</span> <input type="date" id="im_hib2" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hemophilus Influenza Booster</span> <input type="date" id="im_hibb" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Pneumonia</span> <input type="date" id="im_pneumo" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                            </div>
+                            <!-- Right Column -->
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Measles</span> <input type="date" id="im_measles" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hepatitis B 1</span> <input type="date" id="im_hepB1" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hepatitis B 2</span> <input type="date" id="im_hepB2" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hepatitis B 3</span> <input type="date" id="im_hepB3" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hepatitis A 1</span> <input type="date" id="im_hepA1" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Hepatitis A 2</span> <input type="date" id="im_hepA2" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Chicken Pox</span> <input type="date" id="im_cpox" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>MMR 1</span> <input type="date" id="im_mmr1" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>MMR 2</span> <input type="date" id="im_mmr2" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200"><span>Typhoid Fever</span> <input type="date" id="im_typhoid" class="he-input border border-gray-300 p-1 rounded bg-gray-50" onchange="autoSaveCurrentRecord()"></div>
+                                
+                                <!-- Added Other Immunization Field with Conditional Calendar Appear Logic -->
+                                <div class="flex items-center justify-between border-b pb-1 border-gray-200 gap-2">
+                                    <input type="text" id="otherImmunizationInput" placeholder="Other (Specify)..." class="hr-input he-input py-1 text-xs bg-gray-50 flex-1 border-gray-300 font-bold" oninput="toggleOtherImmunizationDate(this); autoSaveCurrentRecord();">
+                                    <input type="date" id="otherImmunizationDate" class="he-input border border-gray-300 p-1 rounded bg-gray-50 hidden" onchange="autoSaveCurrentRecord()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Treatment History inside Health Record -->
+                    <div class="bg-white p-5 rounded-xl border border-gray-300 shadow-sm mb-6">
+                        <h3 class="font-black text-lg border-b-2 border-gray-200 pb-2 mb-4 uppercase text-slate-800"><i class="fa-solid fa-clock-rotate-left mr-2 text-blue-600"></i>Daily Treatment History</h3>
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg custom-scrollbar max-h-[300px]">
+                            <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                                <thead class="bg-[#1e293b] text-white font-bold uppercase text-xs sticky top-0 z-10">
+                                    <tr>
+                                        <th class="p-3 border-r border-slate-600">Date</th>
+                                        <th class="p-3 border-r border-slate-600">Time In - Out</th>
+                                        <th class="p-3 border-r border-slate-600">Chief Complaint</th>
+                                        <th class="p-3 border-r border-slate-600">Intervention / Treatment</th>
+                                        <th class="p-3">Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="he_treatment_history">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Hidden Submit Button to allow JS interception without browser bypass -->
+                    <button type="submit" id="hiddenHealthExamSubmit" class="hidden"></button>
+                </form>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="bg-white px-6 py-4 flex justify-end items-center border-t-2 border-gray-200 shrink-0 relative z-20">
+                <div class="flex gap-3" id="healthExamButtons">
+                    <!-- Buttons injected via JS based on Mode (Create vs Edit) -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categoryTabsConfig = {
+            'GRADE_LEVEL': [
+                { label: 'GRADE 7', filterVal: '7', class: 'tab-g7' }, { label: 'GRADE 8', filterVal: '8', class: 'tab-g8' },
+                { label: 'GRADE 9', filterVal: '9', class: 'tab-g9' }, { label: 'GRADE 10', filterVal: '10', class: 'tab-g10' },
+                { label: 'GRADE 11', filterVal: '11', class: 'tab-g11' }, { label: 'GRADE 12', filterVal: '12', class: 'tab-g12' }
+            ],
+            'OPEN_HIGH': [
+                { label: 'GRADE 7', filterVal: '7', class: 'tab-g7' }, { label: 'GRADE 8', filterVal: '8', class: 'tab-g8' },
+                { label: 'GRADE 9', filterVal: '9', class: 'tab-g9' }, { label: 'GRADE 10', filterVal: '10', class: 'tab-g10' }
+            ],
+            'SNED': [{ label: 'OTHER', filterVal: 'OTHER', class: 'tab-other' }],
+            'ALS': [{ label: 'OTHER', filterVal: 'OTHER', class: 'tab-other' }]
+        };
+
+        const pastMedicalDiseases = [
+            "Allergy", "Asthma", "Anemia", "Bleeding problem", "Behavioral problem",
+            "Hearing problem", "Speech problem", "Visual problem", "Recurrent indigestion",
+            "Jaundice", "Chicken pox", "Dengue fever", "Typhoid fever", "Measles",
+            "Mumps", "Pneumonia", "Primary Complex", "Ear Discharge", "Tonsillitis",
+            "Parasitism", "Heart Disease", "Kidney disease", "Convulsion", "Epilepsy",
+            "Diabetes", "Fainting", "Fractures", "Hospitalization", "Operation", "Others"
+        ];
+
+        let isHomeView = true;
+        let activeCategory = 'GRADE_LEVEL';
+        let activeGradeFilter = 'ALL';
+
+        // Integrated localStorage to persist data across page refreshes
+        let recordsData = JSON.parse(localStorage.getItem('clinicRecordsData')) || [];
+        let healthRecordsData = JSON.parse(localStorage.getItem('clinicHealthRecordsData')) || [];
+        
+        let pendingStudentData = null; 
+        let editingStudentId = null;   
+        let activeSchoolYear = '2026-2027';
+        
+        let viewingTreatmentId = null;
+
+        function persistData() {
+            localStorage.setItem('clinicRecordsData', JSON.stringify(recordsData));
+            localStorage.setItem('clinicHealthRecordsData', JSON.stringify(healthRecordsData));
+        }
+
+        function logout() {
+            if (window.DB && DB.clearSession) DB.clearSession();
+            window.location.href = 'index.html';
+        }
+
+        function toggleNurseMenu(forceOpen) {
+            const drawer = document.getElementById('nurseSideDrawer');
+            const backdrop = document.getElementById('nurseDrawerBackdrop');
+            const menuButton = document.querySelector('button[title="Menu Options"]');
+            if (!drawer || !backdrop) return;
+            const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !drawer.classList.contains('open');
+            drawer.classList.toggle('open', shouldOpen);
+            drawer.setAttribute('aria-hidden', String(!shouldOpen));
+            backdrop.classList.toggle('hidden', !shouldOpen);
+            if (menuButton) {
+                menuButton.setAttribute('aria-expanded', String(shouldOpen));
+                menuButton.setAttribute('aria-label', shouldOpen ? 'Close nurse menu' : 'Open nurse menu');
+            }
+        }
+
+        window.onload = function() {
+            renderDynamicTabs('GRADE_LEVEL');
+            renderTable();
+            populatePastMedicalGrid();
+            setupKeyboardNavigation();
+        };
+
+        // Enable Enter key navigation across form input fields
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.target.classList.contains('he-input')) {
+                    if (e.target.tagName === 'INPUT' && e.target.type !== 'checkbox') {
+                        e.preventDefault();
+                        const focusableElements = Array.from(document.querySelectorAll('#healthExamModal .he-input:not([disabled])'));
+                        const index = focusableElements.indexOf(e.target);
+                        if (index > -1 && index + 1 < focusableElements.length) {
+                            focusableElements[index + 1].focus();
+                        }
+                    }
+                }
+            });
+        }
+
+        // Close Custom Multiselects when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-multiselect')) {
+                document.querySelectorAll('.ms-dropdown').forEach(d => d.classList.add('hidden'));
+            }
+            if (!e.target.closest('#formName') && !e.target.closest('#studentSearchResults')) {
+                document.getElementById('studentSearchResults').classList.add('hidden');
+            }
+        });
+
+        // Add additional chief complaint inputs
+        function addComplaintField() {
+            const container = document.getElementById('complaintContainer');
+            const row = document.createElement('div');
+            row.className = 'flex gap-2 mb-2 complaint-row';
+            row.innerHTML = `
+                <input type="text" name="complaintInput" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 text-white rounded-xl font-black shadow-md hover:bg-red-400 w-11 shrink-0 flex items-center justify-center transition-colors" title="Remove complaint"><i class="fa-solid fa-minus"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        // Add additional intervention inputs
+        function addInterventionField() {
+            const container = document.getElementById('interventionContainer');
+            const row = document.createElement('div');
+            row.className = 'flex gap-2 mb-2 intervention-row';
+            row.innerHTML = `
+                <input type="text" name="interventionInput" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                <button type="button" onclick="this.parentElement.remove()" class="px-3 py-2 bg-red-500 text-white rounded-xl font-black shadow-md hover:bg-red-400 w-11 shrink-0 flex items-center justify-center transition-colors" title="Remove intervention"><i class="fa-solid fa-minus"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        // Entity type change handler
+        function handleEntityTypeChange() {
+            const entityType = document.getElementById('formEntityType').value;
+            document.getElementById('formStudentId').value = '';
+            
+            if (entityType !== 'STUDENT') {
+                document.getElementById('formName').value = '';
+                document.getElementById('formAgeSex').value = '';
+                document.getElementById('formGradeSection').value = '';
+                document.getElementById('formParent').value = 'N/A (Personnel)';
+                document.getElementById('studentSearchResults').classList.add('hidden');
+            } else {
+                document.getElementById('formParent').value = '';
+            }
+        }
+
+        // Student Live Search & Auto-Fill for Daily Treatment Modal
+        function handleStudentNameInput(query) {
+            const entityType = document.getElementById('formEntityType').value;
+            const resultsBox = document.getElementById('studentSearchResults');
+            
+            document.getElementById('formStudentId').value = ''; // clear id on manual typing
+
+            if (entityType !== 'STUDENT' || query.trim().length === 0) {
+                resultsBox.classList.add('hidden');
+                return;
+            }
+
+            const q = query.toLowerCase();
+            const matches = healthRecordsData.filter(student => student.name.toLowerCase().includes(q));
+
+            if (matches.length === 0) {
+                resultsBox.innerHTML = '<div class="p-2 text-xs text-gray-400 font-bold">No registered student found</div>';
+                resultsBox.classList.remove('hidden');
+                return;
+            }
+
+            let html = '';
+            matches.forEach(student => {
+                html += `<div class="p-2.5 hover:bg-slate-700 cursor-pointer text-xs font-bold text-white border-b border-slate-700 last:border-b-0" onclick="selectStudentForTreatment(${student.id})">${student.name} <span class="text-amber-400 font-normal">(${student.section})</span></div>`;
+            });
+            resultsBox.innerHTML = html;
+            resultsBox.classList.remove('hidden');
+        }
+
+        function selectStudentForTreatment(studentId) {
+            const student = healthRecordsData.find(s => s.id === studentId);
+            if (!student) return;
+
+            document.getElementById('formStudentId').value = student.id;
+            document.getElementById('formName').value = student.name;
+            
+            const age = calculateAge(student.birthday);
+            document.getElementById('formAgeSex').value = age !== '' ? `${age} / ${student.sex}` : `? / ${student.sex}`;
+            document.getElementById('formGradeSection').value = student.section;
+            document.getElementById('formParent').value = student.parent || '';
+            document.getElementById('studentSearchResults').classList.add('hidden');
+        }
+
+        function calculateAge(birthdayString) {
+            if (!birthdayString) return '';
+            const today = new Date();
+            const birthDate = new Date(birthdayString);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function toggleCustomMS(id) {
+            const dropdown = document.getElementById(id);
+            const isHidden = dropdown.classList.contains('hidden');
+            document.querySelectorAll('.ms-dropdown').forEach(d => d.classList.add('hidden')); // close others
+            if (isHidden) dropdown.classList.remove('hidden');
+        }
+
+        function updateCustomMS(group) {
+            const checkboxes = document.querySelectorAll('.he-ms-' + group + ':checked');
+            const label = document.getElementById('ms-' + group + '-label');
+            
+            // Native HTML5 Form Validation Requirement hook
+            const reqInput = document.getElementById('req_ms_' + group);
+            if (reqInput) {
+                reqInput.value = checkboxes.length > 0 ? '1' : '';
+                reqInput.setCustomValidity(''); 
+            }
+
+            if (checkboxes.length === 0) {
+                label.innerHTML = '<span class="text-gray-400">Select...</span>';
+            } else {
+                let html = '';
+                checkboxes.forEach(cb => {
+                    html += `<span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${cb.value}</span>`;
+                });
+                label.innerHTML = html;
+            }
+
+            // Abdomen "Others" explicit logic
+            if (group === 'abdomen') {
+                const hasOthers = Array.from(checkboxes).some(cb => cb.value === 'Others');
+                const specifyInput = document.getElementById('ms-abdomen-others');
+                if (hasOthers) {
+                    specifyInput.classList.remove('hidden');
+                } else {
+                    specifyInput.classList.add('hidden');
+                    specifyInput.value = '';
+                }
+            }
+            autoSaveCurrentRecord();
+        }
+
+        // Conditional Calendar Appearance for Other Immunization Field
+        function toggleOtherImmunizationDate(inputEl) {
+            const dateInput = document.getElementById('otherImmunizationDate');
+            if (inputEl.value.trim().length > 0) {
+                dateInput.classList.remove('hidden');
+            } else {
+                dateInput.classList.add('hidden');
+                dateInput.value = '';
+            }
+        }
+
+        function populatePastMedicalGrid() {
+            const grid = document.getElementById('pastMedicalGrid');
+            grid.innerHTML = '';
+            pastMedicalDiseases.forEach((disease, i) => {
+                const isOthers = disease === "Others";
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex flex-col gap-1";
+                const baseId = `spec_${i}`;
+                
+                wrapper.innerHTML = `
+                    <label class="flex items-start gap-2 cursor-pointer">
+                        <input type="checkbox" id="pm_cb_${i}" class="he-input mt-0.5" onchange="toggleSpecifyField(this, '${baseId}', ${!isOthers}); autoSaveCurrentRecord();">
+                        <span class="leading-tight ${isOthers ? 'text-blue-700' : ''}">${disease}</span>
+                    </label>
+                    <input type="text" id="${baseId}" class="hr-input he-input py-1 text-xs hidden border-gray-400 focus:border-blue-500 ${isOthers ? 'bg-blue-50 border-blue-200' : ''}" placeholder="Specify details..." oninput="autoSaveCurrentRecord()">
+                `;
+                grid.appendChild(wrapper);
+            });
+        }
+
+        function toggleSpecifyField(cb, inputId, makeRequired) {
+            const inputField = document.getElementById(inputId);
+            if (cb.checked) {
+                inputField.classList.remove('hidden');
+                if (makeRequired) inputField.required = true;
+            } else {
+                inputField.classList.add('hidden');
+                inputField.required = false;
+                inputField.value = '';
+            }
+        }
+
+        function toggleLivingCondition() {
+            const select = document.getElementById('he_living_condition');
+            const oneParent = document.getElementById('he_living_one_parent');
+            const guardian = document.getElementById('he_living_guardian');
+            
+            oneParent.classList.add('hidden');
+            guardian.classList.add('hidden');
+            oneParent.required = false;
+            guardian.required = false;
+
+            if (select.value === 'One') {
+                oneParent.classList.remove('hidden');
+            } else if (select.value === 'Guardian') {
+                guardian.classList.remove('hidden');
+            }
+        }
+
+        function validateFamilyOrder() {
+            const sibsInput = document.getElementById('he_siblings');
+            const orderInput = document.getElementById('he_order');
+            const membersInput = document.getElementById('he_members');
+            if (membersInput && parseInt(membersInput.value) < 0) membersInput.value = 0;
+            if (sibsInput && parseInt(sibsInput.value) < 0) sibsInput.value = 0;
+            let sibsCount = parseInt(sibsInput.value) || 0;
+            if (orderInput && orderInput.value !== "") {
+                if (parseInt(orderInput.value) < 1) orderInput.value = 1;
+                let maxOrder = sibsCount + 1;
+                if (parseInt(orderInput.value) > maxOrder) orderInput.value = maxOrder;
+            }
+        }
+
+        function renderDynamicTabs(categoryKey) {
+            const tabsContainer = document.getElementById('fileDividerTabs');
+            tabsContainer.innerHTML = '';
+            const tabsList = categoryTabsConfig[categoryKey] || categoryTabsConfig['GRADE_LEVEL'];
+            const totalTabs = tabsList.length;
+
+            tabsList.forEach((tab, index) => {
+                const button = document.createElement('button');
+                button.className = `file-tab ${tab.class}`;
+                button.style.zIndex = totalTabs - index;
+                button.innerText = tab.label;
+                
+                if ((categoryKey === 'SNED' || categoryKey === 'ALS') && tab.filterVal === 'OTHER') {
+                    button.classList.add('active-tab');
+                    activeGradeFilter = 'OTHER';
+                }
+                button.onclick = function() { filterByGrade(tab.filterVal, this); };
+                tabsContainer.appendChild(button);
+            });
+        }
+
+        function handleCategoryChange(selectElement) {
+            activeCategory = selectElement.value;
+            activeGradeFilter = 'ALL'; 
+            isHomeView = false; 
+            document.querySelectorAll('.file-tab, .pill-btn').forEach(b => b.classList.remove('active-tab'));
+            selectElement.classList.add('active-tab');
+            renderDynamicTabs(activeCategory);
+            renderTable();
+        }
+
+        function resetToHome(btnElement) {
+            isHomeView = true; 
+            activeCategory = 'GRADE_LEVEL';
+            document.getElementById('categoryDropdown').value = 'GRADE_LEVEL';
+            activeGradeFilter = 'ALL';
+            document.querySelectorAll('.file-tab, .pill-select, .pill-btn').forEach(b => b.classList.remove('active-tab'));
+            btnElement.classList.add('active-tab');
+            renderDynamicTabs('GRADE_LEVEL');
+            renderTable();
+        }
+
+        function filterByGrade(gradeVal, btnElement) {
+            activeGradeFilter = gradeVal;
+            isHomeView = false;
+            document.querySelectorAll('.file-tab, .pill-btn').forEach(t => t.classList.remove('active-tab'));
+            if (btnElement) btnElement.classList.add('active-tab');
+            renderTable();
+        }
+
+        function resetDateFilter() {
+            document.getElementById('dateFilter').value = '';
+            renderTable();
+        }
+
+        function renderTable() {
+            const thead = document.getElementById('tableHeader');
+            const tbody = document.getElementById('tableBody');
+            const searchVal = document.getElementById('searchInput').value.trim().toLowerCase();
+            const mainTitle = document.getElementById('mainTitle');
+            const noResults = document.getElementById('noResults');
+
+            const dailyCtrl = document.getElementById('dailyTreatmentControls');
+            const healthCtrl = document.getElementById('healthRecordControls');
+
+            if (isHomeView) {
+                dailyCtrl.classList.remove('hidden'); dailyCtrl.classList.add('flex');
+                healthCtrl.classList.add('hidden'); healthCtrl.classList.remove('flex');
+            } else {
+                dailyCtrl.classList.add('hidden'); dailyCtrl.classList.remove('flex');
+                healthCtrl.classList.remove('hidden'); healthCtrl.classList.add('flex');
+            }
+
+            document.getElementById('masterAddBtnText').innerText = isHomeView ? 'ADD RECORD' : 'ADD CARD';
+            tbody.innerHTML = '';
+
+            if (!isHomeView) {
+                let titlePrefix = activeGradeFilter === 'ALL' ? activeCategory.replace('_', ' ') : (activeGradeFilter === 'OTHER' ? activeCategory : `GRADE ${activeGradeFilter}`);
+                mainTitle.innerText = `${titlePrefix} - HEALTH RECORDS`;
+
+                thead.innerHTML = `<tr><th style="width: 45%;">Name</th><th style="width: 20%;">Section</th><th style="width: 20%;">School Year</th><th style="width: 15%;">Status</th></tr>`;
+
+                const statusVal = document.getElementById('healthStatusFilter').value;
+                const filtered = healthRecordsData.filter(item => {
+                    const matchSearch = item.name.toLowerCase().includes(searchVal) || item.section.toLowerCase().includes(searchVal);
+                    let matchGrade = false;
+                    if (activeGradeFilter === 'ALL') {
+                        if (activeCategory === 'OPEN_HIGH') matchGrade = ['7', '8', '9', '10'].includes(item.gradeNum);
+                        else if (activeCategory === 'SNED' || activeCategory === 'ALS') matchGrade = (item.gradeNum === 'OTHER');
+                        else matchGrade = true;
+                    } else matchGrade = (item.gradeNum === activeGradeFilter);
+                    const matchStatus = statusVal === 'ALL' || item.status === statusVal;
+                    return matchSearch && matchGrade && matchStatus;
+                });
+
+                if (filtered.length === 0) noResults.classList.remove('hidden');
+                else {
+                    noResults.classList.add('hidden');
+                    filtered.forEach(row => {
+                        const tr = document.createElement('tr');
+                        const isIncomplete = row.isComplete === false;
+                        
+                        if (isIncomplete) {
+                            tr.classList.add('row-incomplete');
+                        }
+
+                        tr.onclick = () => openEditStudent(row.id);
+                        
+                        const statusBadge = isIncomplete ? 
+                            `<span class="status-pill status-incomplete">Incomplete</span>` : 
+                            `<span>${row.status}</span>`;
+
+                        tr.innerHTML = `
+                            <td class="text-left pl-6 font-extrabold text-slate-900">${row.name}</td>
+                            <td>${row.section}</td>
+                            <td>${row.schoolYear}</td>
+                            <td>${statusBadge}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+                document.getElementById('recordCounter').innerText = `Showing ${filtered.length} of ${healthRecordsData.length} entries`;
+                document.getElementById('activeFilterBadge').innerText = activeGradeFilter === 'ALL' ? `Filter: ${activeCategory.replace('_', ' ')} Health Records` : `Filter: Grade ${activeGradeFilter} Health Records`;
+
+            } else {
+                mainTitle.innerText = 'RECORD OF DAILY TREATMENT';
+                thead.innerHTML = `<tr><th style="width: 4%;">#</th><th style="width: 8%;">DATE</th><th style="width: 7%;">TIME IN</th><th style="width: 7%;">TIME OUT</th><th style="width: 17%;">NAME</th><th style="width: 7%;">AGE &<br>SEX</th><th style="width: 10%;">GRADE &<br>SECTION</th><th style="width: 13%;">CHIEF<br>COMPLAINT</th><th style="width: 11%;">INTERVENTION</th><th style="width: 11%;">PARENT/GUARDIAN</th><th style="width: 7%;">REMARKS</th><th style="width: 6%;">STATUS</th></tr>`;
+
+                const personnelFilterVal = document.getElementById('personnelFilter').value;
+                const rawDateVal = document.getElementById('dateFilter').value;
+                let formattedDateVal = '';
+                if (rawDateVal) {
+                    const dp = rawDateVal.split('-');
+                    formattedDateVal = `${dp[1]}/${dp[2]}/${dp[0]}`;
+                }
+
+                const filtered = recordsData.filter(item => {
+                    const matchSearch = item.name.toLowerCase().includes(searchVal) || item.complaint.toLowerCase().includes(searchVal);
+                    let matchPersonnel = true;
+                    if (personnelFilterVal === 'STUDENT') matchPersonnel = (item.entityType === 'STUDENT');
+                    else if (personnelFilterVal === 'TEACHING') matchPersonnel = (item.entityType === 'TEACHING');
+                    else if (personnelFilterVal === 'NON_TEACHING') matchPersonnel = (item.entityType === 'NON_TEACHING');
+                    const matchDate = !formattedDateVal || item.dateDisplay === formattedDateVal;
+                    return matchSearch && matchPersonnel && matchDate;
+                });
+
+                if (filtered.length === 0) noResults.classList.remove('hidden');
+                else {
+                    noResults.classList.add('hidden');
+                    filtered.forEach((row, index) => {
+                        const tr = document.createElement('tr');
+                        tr.onclick = () => openViewTreatment(row.id);
+                        tr.innerHTML = `
+                            <td class="font-extrabold">${index + 1}</td>
+                            <td>${row.dateDisplay}</td>
+                            <td>${row.timeIn}</td>
+                            <td>${row.timeOut || '—'}</td>
+                            <td class="text-left pl-2 font-extrabold">${row.name}</td>
+                            <td>${row.ageSex}</td>
+                            <td>${row.gradeSection}</td>
+                            <td class="text-left"><div class="line-clamp-2 leading-tight">${row.complaint}</div></td>
+                            <td class="text-left"><div class="line-clamp-2 leading-tight">${row.treatment}</div></td>
+                            <td class="text-left pl-2">${row.parent}</td>
+                            <td>${row.remarks}</td>
+                            <td><span class="status-pill ${row.status === 'IN' ? 'status-in' : 'status-out'}">${row.status}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+                document.getElementById('recordCounter').innerText = `Showing ${filtered.length} of ${recordsData.length} entries`;
+                document.getElementById('activeFilterBadge').innerText = `Filter: ${personnelFilterVal === 'ALL' ? 'All Records' : personnelFilterVal.replace('_', '-')}`;
+            }
+        }
+
+        // View Daily Treatment Details Modal
+        function openViewTreatment(id) {
+            const record = recordsData.find(r => r.id === id);
+            if (!record) return;
+            viewingTreatmentId = id;
+
+            document.getElementById('vt_name').innerText = record.name || 'Unknown';
+            document.getElementById('vt_date').innerText = record.dateDisplay || 'No Date';
+            document.getElementById('vt_time').innerText = `In ${record.timeIn}` + (record.timeOut ? ` - Out ${record.timeOut}` : '');
+            
+            const statusBadge = document.getElementById('vt_status');
+            statusBadge.innerText = record.status === 'IN' ? 'CURRENTLY IN' : 'OUT';
+            statusBadge.className = `status-pill text-[10px] ${record.status === 'IN' ? 'status-in' : 'status-out'}`;
+
+            document.getElementById('vt_agesex').innerText = record.ageSex || 'N/A';
+            document.getElementById('vt_gradesec').innerText = record.gradeSection || 'N/A';
+            document.getElementById('vt_entity').innerText = record.entityType.replace('_', ' ') || 'N/A';
+            document.getElementById('vt_parent').innerText = record.parent || 'N/A';
+            
+            document.getElementById('vt_complaint').innerHTML = record.complaint || 'N/A';
+            document.getElementById('vt_treatment').innerHTML = record.treatment || 'N/A';
+            
+            // Set input value for Remarks editing
+            document.getElementById('vt_remarks_input').value = record.remarks || '';
+
+            document.getElementById('vt_add_complaint_input').value = '';
+            document.getElementById('vt_add_treatment_input').value = '';
+            
+            const toBtn = document.getElementById('vt_timeout_btn');
+            if(record.status === 'OUT') {
+                toBtn.classList.add('hidden');
+            } else {
+                toBtn.classList.remove('hidden');
+            }
+
+            showModal('viewTreatmentModal');
+        }
+
+        function updateTreatmentRemarks(val) {
+            const record = recordsData.find(r => r.id === viewingTreatmentId);
+            if (record) {
+                record.remarks = val;
+                persistData();
+                renderTable(); // keeps the table rows updated behind the modal
+            }
+        }
+
+        function appendComplaintToView() {
+            const input = document.getElementById('vt_add_complaint_input');
+            const val = input.value.trim();
+            if(!val) return;
+
+            const record = recordsData.find(r => r.id === viewingTreatmentId);
+            if(record) {
+                if(record.complaint) {
+                    record.complaint += `<br>• ${val}`;
+                } else {
+                    record.complaint = `• ${val}`;
+                }
+                document.getElementById('vt_complaint').innerHTML = record.complaint;
+                input.value = '';
+                persistData();
+                renderTable(); // Update main table behind modal
+            }
+        }
+
+        function appendTreatmentToView() {
+            const input = document.getElementById('vt_add_treatment_input');
+            const val = input.value.trim();
+            if(!val) return;
+
+            const record = recordsData.find(r => r.id === viewingTreatmentId);
+            if(record) {
+                if(record.treatment) {
+                    record.treatment += `<br>• ${val}`;
+                } else {
+                    record.treatment = `• ${val}`;
+                }
+                document.getElementById('vt_treatment').innerHTML = record.treatment;
+                input.value = '';
+                persistData();
+                renderTable(); // Update main table behind modal
+            }
+        }
+
+        function executeTimeOut() {
+            const record = recordsData.find(r => r.id === viewingTreatmentId);
+            if(record) {
+                const today = new Date();
+                let hours = today.getHours();
+                let minutes = today.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                
+                record.timeOut = hours + ':' + minutes + ' ' + ampm;
+                record.status = 'OUT';
+                
+                persistData();
+                renderTable();
+                closeModal('viewTreatmentModal');
+            }
+        }
+
+        function deleteTreatmentRecord() {
+            const recordIndex = recordsData.findIndex(r => r.id === viewingTreatmentId);
+            if (recordIndex === -1) return;
+
+            const record = recordsData[recordIndex];
+            const confirmed = confirm(`Delete the daily treatment record for ${record.name} dated ${record.dateDisplay}? This cannot be undone.`);
+            if (!confirmed) return;
+
+            recordsData.splice(recordIndex, 1);
+            persistData();
+            renderTable();
+            viewingTreatmentId = null;
+            closeModal('viewTreatmentModal');
+        }
+
+        // Modals Management
+        function showModal(id) {
+            const modal = document.getElementById(id);
+            const content = modal.querySelector('.modal-content');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 20);
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            const content = modal.querySelector('.modal-content');
+            modal.classList.add('opacity-0'); content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); }, 200);
+        }
+
+        function switchModal(closeId, openId) {
+            const modalClose = document.getElementById(closeId);
+            const contentClose = modalClose.querySelector('.modal-content');
+            modalClose.classList.add('opacity-0'); 
+            contentClose.classList.add('scale-95');
+            
+            setTimeout(() => { 
+                modalClose.classList.add('hidden'); 
+                modalClose.classList.remove('flex'); 
+                
+                const modalOpen = document.getElementById(openId);
+                const contentOpen = modalOpen.querySelector('.modal-content');
+                modalOpen.classList.remove('hidden'); 
+                modalOpen.classList.add('flex');
+                
+                setTimeout(() => { 
+                    modalOpen.classList.remove('opacity-0'); 
+                    contentOpen.classList.remove('scale-95'); 
+                }, 20);
+            }, 200);
+        }
+
+        function openMasterModal() {
+            if (isHomeView) {
+                document.getElementById('recordForm').reset();
+                document.getElementById('formStudentId').value = '';
+                
+                // Reset constraints for complaints container
+                const complaintContainer = document.getElementById('complaintContainer');
+                if (complaintContainer) {
+                    complaintContainer.innerHTML = `
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Chief Complaint <span class="text-red-500">*</span></label>
+                        <div class="flex gap-2 mb-2 complaint-row">
+                            <input type="text" name="complaintInput" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                            <button type="button" onclick="addComplaintField()" class="px-3 py-2 bg-amber-400 text-slate-900 rounded-xl font-black shadow-md hover:bg-amber-300 w-11 shrink-0 flex items-center justify-center transition-all" title="Add another complaint"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    `;
+                }
+
+                // Reset constraints for intervention container
+                const interventionContainer = document.getElementById('interventionContainer');
+                if (interventionContainer) {
+                    interventionContainer.innerHTML = `
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-300">Intervention / Treatment <span class="text-red-500">*</span></label>
+                        <div class="flex gap-2 mb-2 intervention-row">
+                            <input type="text" name="interventionInput" required class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white font-semibold text-sm focus:outline-none focus:border-amber-400">
+                            <button type="button" onclick="addInterventionField()" class="px-3 py-2 bg-amber-400 text-slate-900 rounded-xl font-black shadow-md hover:bg-amber-300 w-11 shrink-0 flex items-center justify-center transition-all" title="Add another intervention"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    `;
+                }
+
+                // Set default date and time
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                document.getElementById('formDate').value = `${yyyy}-${mm}-${dd}`;
+
+                let hours = today.getHours();
+                let minutes = today.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('formTimeIn').value = hours + ':' + minutes + ' ' + ampm;
+
+                showModal('dailyTreatmentModal');
+            } else {
+                let gradeText = activeGradeFilter !== 'ALL' ? `(GRADE ${activeGradeFilter})` : '';
+                document.getElementById('chooseExistingTitle').innerText = `CHOOSE EXISTING RECORD ${gradeText}`;
+                showModal('chooseExistingModal');
+            }
+        }
+
+        function handleDailySubmit(e) {
+            e.preventDefault();
+            const gradeSec = document.getElementById('formGradeSection').value;
+            let extractedGrade = (gradeSec.match(/\d+/) || ['12'])[0];
+            if (gradeSec.toLowerCase().includes('sned') || gradeSec.toLowerCase().includes('als') || gradeSec.toLowerCase().includes('other')) extractedGrade = 'OTHER';
+
+            const dateVal = document.getElementById('formDate').value;
+            let formattedDate = dateVal;
+            if (dateVal.includes('-')) {
+                const parts = dateVal.split('-');
+                if (parts.length === 3) formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
+            }
+
+            // Assign student ID if searching returned a match
+            const explicitId = document.getElementById('formStudentId').value;
+            
+            // Gather all complaint inputs
+            const complaintInputs = document.querySelectorAll('input[name="complaintInput"]');
+            const complaintsArray = Array.from(complaintInputs).map(i => i.value.trim()).filter(v => v !== '');
+            const complaintStr = complaintsArray.length > 0 ? '• ' + complaintsArray.join('<br>• ') : '';
+
+            // Gather all intervention inputs
+            const interventionInputs = document.querySelectorAll('input[name="interventionInput"]');
+            const interventionsArray = Array.from(interventionInputs).map(i => i.value.trim()).filter(v => v !== '');
+            const interventionStr = interventionsArray.length > 0 ? '• ' + interventionsArray.join('<br>• ') : '';
+
+            recordsData.push({
+                id: Date.now(),
+                studentId: explicitId ? parseInt(explicitId) : null,
+                entityType: document.getElementById('formEntityType').value,
+                dateDisplay: formattedDate,
+                timeIn: document.getElementById('formTimeIn').value,
+                timeOut: document.getElementById('formTimeOut').value,
+                name: document.getElementById('formName').value,
+                ageSex: document.getElementById('formAgeSex').value,
+                gradeSection: gradeSec,
+                gradeNum: extractedGrade,
+                complaint: complaintStr,
+                treatment: interventionStr,
+                parent: document.getElementById('formParent').value,
+                remarks: document.getElementById('formRemarks').value || 'None',
+                status: document.getElementById('formStatus').value
+            });
+
+            persistData();
+            renderTable();
+            closeModal('dailyTreatmentModal');
+            document.getElementById('formName').value = '';
+            document.getElementById('formTimeOut').value = '';
+        }
+
+        function openAddNewCardModal() {
+            let gradeText = activeGradeFilter !== 'ALL' ? `— GRADE ${activeGradeFilter}` : '';
+            document.getElementById('addNewCardTitle').innerText = `ADD NEW CARD ${gradeText}`;
+
+            document.getElementById('newCardForm').reset();
+            
+            let progSelect = document.getElementById('nc_program');
+            if (activeCategory === 'OPEN_HIGH') progSelect.value = 'Open High';
+            else if (activeCategory === 'SNED') progSelect.value = 'SNED';
+            else if (activeCategory === 'ALS') progSelect.value = 'ALS';
+            else progSelect.value = 'Regular Education';
+            
+            document.getElementById('nc_school').value = 'Pasay City South High School';
+
+            switchModal('chooseExistingModal', 'addNewCardModal');
+        }
+
+        function handleNewCardSubmit(e) {
+            e.preventDefault();
+            
+            const last = document.getElementById('nc_last').value;
+            const first = document.getElementById('nc_first').value;
+            const full_name = `${last}, ${first} ${document.getElementById('nc_middle').value}`;
+            
+            pendingStudentData = {
+                id: Date.now(),
+                name: full_name,
+                sex: document.getElementById('nc_sex').value,
+                section: document.getElementById('nc_section').value,
+                program: document.getElementById('nc_program').value,
+                birthday: document.getElementById('nc_birthday').value,
+                telephone: document.getElementById('nc_telephone').value,
+                division: document.getElementById('nc_division').value,
+                religion: document.getElementById('nc_religion').value,
+                birthplace: document.getElementById('nc_birthplace').value,
+                parent: document.getElementById('nc_parent').value,
+                address: document.getElementById('nc_address').value,
+                school: document.getElementById('nc_school').value,
+                schoolYear: '2026-2027',
+                historyBySY: {
+                    '2026-2027': {}
+                },
+                gradeNum: activeGradeFilter !== 'ALL' ? activeGradeFilter : 'OTHER',
+                status: 'Active',
+                isComplete: false
+            };
+
+            document.getElementById('confirmNameDisplay').innerText = full_name;
+            switchModal('addNewCardModal', 'confirmModal');
+        }
+
+        function proceedToHealthExam() {
+            healthRecordsData.push(pendingStudentData);
+            editingStudentId = pendingStudentData.id;
+            activeSchoolYear = '2026-2027';
+            persistData();
+            renderTable();
+            setupHealthExamModal(editingStudentId, 'CREATE');
+            switchModal('confirmModal', 'healthExamModal');
+        }
+
+        function openEditStudent(id) {
+            const student = healthRecordsData.find(s => s.id === id);
+            if (!student) return;
+            editingStudentId = id;
+            activeSchoolYear = '2026-2027';
+            setupHealthExamModal(id, 'VIEW');
+            showModal('healthExamModal');
+        }
+
+        function setupHealthExamModal(studentId, mode) {
+            const student = healthRecordsData.find(s => s.id === studentId);
+            if (!student) return;
+
+            document.getElementById('he_display_name').innerText = student.name || 'N/A';
+            document.getElementById('he_display_program').innerText = student.program || 'N/A';
+            document.getElementById('he_display_sex').innerText = student.sex || 'N/A';
+            document.getElementById('he_display_section').innerText = student.section || 'N/A';
+            document.getElementById('he_display_birthday').innerText = student.birthday || 'N/A';
+            document.getElementById('he_display_telephone').innerText = student.telephone || 'N/A';
+            document.getElementById('he_display_religion').innerText = student.religion || 'N/A';
+            document.getElementById('he_display_parent').innerText = student.parent || 'N/A';
+            document.getElementById('he_display_address').innerText = student.address || 'N/A';
+            document.getElementById('he_display_school').innerText = student.school || 'N/A';
+
+            // Hide specific student details when viewing per request
+            const optionalFields = document.querySelectorAll('.detail-optional-field');
+            optionalFields.forEach(el => {
+                if (mode === 'VIEW') {
+                    el.style.display = 'none';
+                } else {
+                    el.style.display = 'block';
+                }
+            });
+
+            // Populate Treatment History dynamically
+            const historyBody = document.getElementById('he_treatment_history');
+            const historyRecords = recordsData.filter(r => r.studentId === studentId || (r.name && student.name && r.name.toLowerCase() === student.name.toLowerCase()));
+            
+            if (historyRecords.length === 0) {
+                historyBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500 font-bold bg-gray-50">No daily treatment history found.</td></tr>`;
+            } else {
+                historyBody.innerHTML = historyRecords.map((r, index) => {
+                    return `
+                        <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 border-b border-gray-200 last:border-b-0">
+                            <td class="p-3 font-extrabold text-slate-800 border-r border-gray-200">${r.dateDisplay}</td>
+                            <td class="p-3 font-semibold text-slate-700 border-r border-gray-200">${r.timeIn} - ${r.timeOut || 'Ongoing'}</td>
+                            <td class="p-3 font-bold text-red-600 border-r border-gray-200">${r.complaint}</td>
+                            <td class="p-3 font-semibold text-slate-700 border-r border-gray-200">${r.treatment}</td>
+                            <td class="p-3 font-semibold text-slate-500 italic">${r.remarks || 'None'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            if (!student.historyBySY) {
+                student.historyBySY = {};
+            }
+            if (!student.historyBySY['2026-2027']) {
+                student.historyBySY['2026-2027'] = {};
+            }
+
+            renderSchoolYearButtons();
+            
+            if (mode === 'CREATE') {
+                document.getElementById('healthExamForm').reset();
+                document.querySelectorAll('.ms-dropdown input[type="checkbox"]').forEach(cb => cb.checked = false);
+            }
+            
+            loadSchoolYearData(activeSchoolYear);
+
+            const btnContainer = document.getElementById('healthExamButtons');
+            const inputs = document.querySelectorAll('.he-input');
+
+            if (mode === 'CREATE') {
+                document.getElementById('otherImmunizationDate').classList.add('hidden');
+
+                inputs.forEach(i => { 
+                    i.disabled = false;
+                    if(i.type === 'checkbox' && i.hasAttribute('onchange')) {
+                        const ocAttr = i.getAttribute('onchange');
+                        if(ocAttr && ocAttr.includes('toggleSpecifyField')) {
+                            const match = ocAttr.match(/'([^']+)'/);
+                            if(match) toggleSpecifyField(i, match[1], false);
+                        }
+                    }
+                });
+                toggleLivingCondition();
+
+                btnContainer.innerHTML = `
+                    <button type="button" onclick="saveHealthRecord(false)" class="bg-red-600 hover:bg-red-700 text-white font-black px-6 py-2 rounded-xl text-sm shadow-md">Continue Later</button>
+                    <button type="submit" form="healthExamForm" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-2 rounded-xl text-sm shadow-md">Done</button>
+                `;
+            } else if (mode === 'VIEW') {
+                inputs.forEach(i => i.disabled = true);
+                btnContainer.innerHTML = `
+                    <button type="button" onclick="deleteHealthRecord()" class="bg-red-100 hover:bg-red-200 text-red-700 border-2 border-red-700 font-black px-6 py-2 rounded-xl text-sm shadow-md">DELETE</button>
+                    <button type="button" onclick="setupHealthExamModal(${studentId}, 'EDIT')" class="bg-amber-400 hover:bg-amber-500 text-black font-black px-8 py-2 rounded-xl text-sm shadow-md">EDIT</button>
+                    <button type="button" onclick="closeModal('healthExamModal')" class="bg-black hover:bg-slate-800 text-white font-black px-8 py-2 rounded-xl text-sm shadow-md">Done</button>
+                `;
+            } else if (mode === 'EDIT') {
+                inputs.forEach(i => i.disabled = false);
+                btnContainer.innerHTML = `
+                    <button type="button" onclick="saveHealthRecord(false)" class="bg-red-600 hover:bg-red-700 text-white font-black px-6 py-2 rounded-xl text-sm shadow-md">Continue Later</button>
+                    <button type="submit" form="healthExamForm" class="bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-2 rounded-xl text-sm shadow-md">Done</button>
+                `;
+            }
+        }
+
+        function renderSchoolYearButtons() {
+            const container = document.getElementById('syButtonsContainer');
+            container.innerHTML = '';
+            
+            const schoolYears = ['2026-2027'];
+
+            schoolYears.forEach(sy => {
+                const btn = document.createElement('button');
+                const isActive = (sy === activeSchoolYear);
+                btn.type = 'button';
+                btn.className = `px-3 py-1 rounded-lg text-xs font-black transition-all border ${isActive ? 'bg-blue-600 text-white border-blue-700 shadow' : 'bg-white text-blue-900 border-blue-300 hover:bg-blue-100'}`;
+                btn.innerText = `SY: ${sy}`;
+                btn.onclick = () => switchSchoolYear(sy);
+                container.appendChild(btn);
+            });
+        }
+
+        function switchSchoolYear(targetSY) {
+            saveCurrentSchoolYearData();
+            activeSchoolYear = targetSY;
+            renderSchoolYearButtons();
+            loadSchoolYearData(targetSY);
+        }
+
+        function autoSaveCurrentRecord() {
+            const student = healthRecordsData.find(s => s.id === editingStudentId);
+            if (!student) return;
+            if (!student.historyBySY) student.historyBySY = {};
+
+            const getChecked = (group) => Array.from(document.querySelectorAll('.he-ms-' + group + ':checked')).map(cb => cb.value);
+
+            student.historyBySY[activeSchoolYear] = {
+                vitals: {
+                    examDate: document.getElementById('v_examDate').value,
+                    temp: document.getElementById('v_temp').value,
+                    bp: document.getElementById('v_bp').value,
+                    rate: document.getElementById('v_rate').value,
+                    height: document.getElementById('v_height').value,
+                    weight: document.getElementById('v_weight').value
+                },
+                findings: {
+                    ns: getChecked('ns'),
+                    va: getChecked('va'),
+                    hear: getChecked('hear'),
+                    skin: getChecked('skin'),
+                    eye: getChecked('eye'),
+                    mouth: getChecked('mouth'),
+                    lungs: getChecked('lungs'),
+                    abdomen: getChecked('abdomen'),
+                    abdomenOthers: document.getElementById('ms-abdomen-others').value,
+                    spine: getChecked('spine')
+                },
+                part1Others: {
+                    others: document.getElementById('v_others').value,
+                    examinedBy: document.getElementById('v_examinedBy').value
+                },
+                familyBg: {
+                    occupation: document.getElementById('he_occupation').value,
+                    livingCondition: document.getElementById('he_living_condition').value,
+                    oneParent: document.getElementById('he_living_one_parent').value,
+                    guardian: document.getElementById('he_living_guardian').value,
+                    members: document.getElementById('he_members').value,
+                    siblings: document.getElementById('he_siblings').value,
+                    order: document.getElementById('he_order').value,
+                    smoker: document.getElementById('he_smoker').checked,
+                    alcohol: document.getElementById('he_alcohol').checked
+                },
+                familyHistory: {
+                    cancer: document.getElementById('fh_cancer').value,
+                    heart: document.getElementById('fh_heart').value,
+                    highblood: document.getElementById('fh_highblood').value,
+                    diabetes: document.getElementById('fh_diabetes').value,
+                    tb: document.getElementById('fh_tb').value,
+                    asthma: document.getElementById('fh_asthma').value,
+                    bleeding: document.getElementById('fh_bleeding').value,
+                    mental: document.getElementById('fh_mental').value,
+                    others: document.getElementById('fh_others').value
+                },
+                pastMedical: pastMedicalDiseases.map((d, i) => ({
+                    checked: document.getElementById('pm_cb_' + i).checked,
+                    specify: document.getElementById('spec_' + i).value
+                })),
+                specialMeds: {
+                    meds: document.getElementById('sm_meds').value,
+                    allergy: document.getElementById('sm_allergy').value,
+                    care: document.getElementById('sm_care').value,
+                    others: document.getElementById('sm_others').value
+                },
+                immunization: {
+                    bcg: document.getElementById('im_bcg').value,
+                    dpt1: document.getElementById('im_dpt1').value,
+                    dpt2: document.getElementById('im_dpt2').value,
+                    dpt3: document.getElementById('im_dpt3').value,
+                    dptb1: document.getElementById('im_dptb1').value,
+                    dptb2: document.getElementById('im_dptb2').value,
+                    dt: document.getElementById('im_dt').value,
+                    hib1: document.getElementById('im_hib1').value,
+                    hib2: document.getElementById('im_hib2').value,
+                    hibb: document.getElementById('im_hibb').value,
+                    pneumo: document.getElementById('im_pneumo').value,
+                    measles: document.getElementById('im_measles').value,
+                    hepB1: document.getElementById('im_hepB1').value,
+                    hepB2: document.getElementById('im_hepB2').value,
+                    hepB3: document.getElementById('im_hepB3').value,
+                    hepA1: document.getElementById('im_hepA1').value,
+                    hepA2: document.getElementById('im_hepA2').value,
+                    cpox: document.getElementById('im_cpox').value,
+                    mmr1: document.getElementById('im_mmr1').value,
+                    mmr2: document.getElementById('im_mmr2').value,
+                    typhoid: document.getElementById('im_typhoid').value,
+                    otherInput: document.getElementById('otherImmunizationInput').value,
+                    otherDate: document.getElementById('otherImmunizationDate').value
+                }
+            };
+            student.schoolYear = activeSchoolYear;
+            persistData();
+            renderTable();
+        }
+
+        function saveCurrentSchoolYearData() {
+            autoSaveCurrentRecord();
+        }
+
+        function loadSchoolYearData(sy) {
+            const student = healthRecordsData.find(s => s.id === editingStudentId);
+            const d = student && student.historyBySY && student.historyBySY[sy] ? student.historyBySY[sy] : {};
+
+            const getVal = (obj, key, def = '') => obj && obj[key] !== undefined ? obj[key] : def;
+
+            const v = d.vitals || {};
+            document.getElementById('v_examDate').value = getVal(v, 'examDate');
+            document.getElementById('v_temp').value = getVal(v, 'temp');
+            document.getElementById('v_bp').value = getVal(v, 'bp');
+            document.getElementById('v_rate').value = getVal(v, 'rate');
+            document.getElementById('v_height').value = getVal(v, 'height');
+            document.getElementById('v_weight').value = getVal(v, 'weight');
+
+            const f = d.findings || {};
+            const setChecked = (group, arr) => {
+                document.querySelectorAll('.he-ms-' + group).forEach(cb => {
+                    cb.checked = (arr || []).includes(cb.value);
+                });
+                updateCustomMS(group);
+            };
+            setChecked('ns', f.ns);
+            setChecked('va', f.va);
+            setChecked('hear', f.hear);
+            setChecked('skin', f.skin);
+            setChecked('eye', f.eye);
+            setChecked('mouth', f.mouth);
+            setChecked('lungs', f.lungs);
+            setChecked('abdomen', f.abdomen);
+            document.getElementById('ms-abdomen-others').value = getVal(f, 'abdomenOthers');
+            setChecked('spine', f.spine);
+
+            const p1 = d.part1Others || {};
+            document.getElementById('v_others').value = getVal(p1, 'others');
+            document.getElementById('v_examinedBy').value = getVal(p1, 'examinedBy');
+
+            const fb = d.familyBg || {};
+            document.getElementById('he_occupation').value = getVal(fb, 'occupation');
+            document.getElementById('he_living_condition').value = getVal(fb, 'livingCondition');
+            document.getElementById('he_living_one_parent').value = getVal(fb, 'oneParent');
+            document.getElementById('he_living_guardian').value = getVal(fb, 'guardian');
+            document.getElementById('he_members').value = getVal(fb, 'members');
+            document.getElementById('he_siblings').value = getVal(fb, 'siblings');
+            document.getElementById('he_order').value = getVal(fb, 'order');
+            document.getElementById('he_smoker').checked = getVal(fb, 'smoker', false);
+            document.getElementById('he_alcohol').checked = getVal(fb, 'alcohol', false);
+            toggleLivingCondition();
+
+            const fh = d.familyHistory || {};
+            document.getElementById('fh_cancer').value = getVal(fh, 'cancer');
+            document.getElementById('fh_heart').value = getVal(fh, 'heart');
+            document.getElementById('fh_highblood').value = getVal(fh, 'highblood');
+            document.getElementById('fh_diabetes').value = getVal(fh, 'diabetes');
+            document.getElementById('fh_tb').value = getVal(fh, 'tb');
+            document.getElementById('fh_asthma').value = getVal(fh, 'asthma');
+            document.getElementById('fh_bleeding').value = getVal(fh, 'bleeding');
+            document.getElementById('fh_mental').value = getVal(fh, 'mental');
+            document.getElementById('fh_others').value = getVal(fh, 'others');
+
+            const pm = d.pastMedical || [];
+            pastMedicalDiseases.forEach((disease, i) => {
+                const cb = document.getElementById('pm_cb_' + i);
+                const spec = document.getElementById('spec_' + i);
+                const data = pm[i] || {};
+                cb.checked = !!data.checked;
+                spec.value = getVal(data, 'specify');
+                toggleSpecifyField(cb, 'spec_' + i, disease !== "Others");
+            });
+
+            const sm = d.specialMeds || {};
+            document.getElementById('sm_meds').value = getVal(sm, 'meds');
+            document.getElementById('sm_allergy').value = getVal(sm, 'allergy');
+            document.getElementById('sm_care').value = getVal(sm, 'care');
+            document.getElementById('sm_others').value = getVal(sm, 'others');
+
+            const im = d.immunization || {};
+            document.getElementById('im_bcg').value = getVal(im, 'bcg');
+            document.getElementById('im_dpt1').value = getVal(im, 'dpt1');
+            document.getElementById('im_dpt2').value = getVal(im, 'dpt2');
+            document.getElementById('im_dpt3').value = getVal(im, 'dpt3');
+            document.getElementById('im_dptb1').value = getVal(im, 'dptb1');
+            document.getElementById('im_dptb2').value = getVal(im, 'dptb2');
+            document.getElementById('im_dt').value = getVal(im, 'dt');
+            document.getElementById('im_hib1').value = getVal(im, 'hib1');
+            document.getElementById('im_hib2').value = getVal(im, 'hib2');
+            document.getElementById('im_hibb').value = getVal(im, 'hibb');
+            document.getElementById('im_pneumo').value = getVal(im, 'pneumo');
+            document.getElementById('im_measles').value = getVal(im, 'measles');
+            document.getElementById('im_hepB1').value = getVal(im, 'hepB1');
+            document.getElementById('im_hepB2').value = getVal(im, 'hepB2');
+            document.getElementById('im_hepB3').value = getVal(im, 'hepB3');
+            document.getElementById('im_hepA1').value = getVal(im, 'hepA1');
+            document.getElementById('im_hepA2').value = getVal(im, 'hepA2');
+            document.getElementById('im_cpox').value = getVal(im, 'cpox');
+            document.getElementById('im_mmr1').value = getVal(im, 'mmr1');
+            document.getElementById('im_mmr2').value = getVal(im, 'mmr2');
+            document.getElementById('im_typhoid').value = getVal(im, 'typhoid');
+            document.getElementById('otherImmunizationInput').value = getVal(im, 'otherInput');
+            document.getElementById('otherImmunizationDate').value = getVal(im, 'otherDate');
+            toggleOtherImmunizationDate(document.getElementById('otherImmunizationInput'));
+        }
+
+        function handleHealthExamSubmit(e) {
+            e.preventDefault();
+            saveHealthRecord(true);
+        }
+
+        function saveHealthRecord(isComplete) {
+            saveCurrentSchoolYearData();
+            const student = healthRecordsData.find(s => s.id === editingStudentId);
+            if (student) {
+                student.isComplete = isComplete;
+            }
+            persistData();
+            renderTable();
+            closeModal('healthExamModal');
+        }
+
+        function deleteHealthRecord() {
+            if (confirm("Are you sure you want to delete this health record?")) {
+                healthRecordsData = healthRecordsData.filter(s => s.id !== editingStudentId);
+                persistData();
+                renderTable();
+                closeModal('healthExamModal');
+            }
+        }
+    </script>
+</body>
+</html>

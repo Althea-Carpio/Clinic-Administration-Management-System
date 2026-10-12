@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Project CAMS | School Clinic</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="logo-icon">
+    <img src="images/logosouth.jpg" alt="Pasay City South High School logo" class="school-logo" onerror="this.style.display='none'">
+            </div>
+
+            <div>
+                <h1>School Clinic</h1>
+                <p>Healthy Students, Brighter Future</p>
+            </div>
+        </div>
+
+        <!-- NAVIGATION -->
+        <nav class="nav">
+            <a href="#home">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#organization">
+                Organizational<br>
+                Chart
+            </a>
+            <a href="#mission">
+                Mission, Vision, &<br>
+                Commitment
+            </a>
+            <a href="#protocols">Protocols</a>
+        </nav>
+
+    </header>
+
+
+    <!-- HERO / HOME -->
+    <section id="home" class="hero">
+
+        <div class="hero-content">
+
+            <div class="hero-copy">
+
+                <p class="welcome">
+                    WELCOME TO
+                </p>
+
+                <h2>
+                    PROJECT CAMS
+                </h2>
+
+                <div class="tagline">
+
+                    <span>Manage Student Records,</span>
+                    <span>Track Clinic Visits,</span>
+                    <span>Organized & Secure</span>
+                    
+                </div>
+
+            </div>
+
+            <div class="hero-side-title">
+                <span>Clinic</span>
+                <span>Administration</span>
+                <span>Management</span>
+                <span>System</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SERVICES -->
+    <section class="services">
+
+        <div class="service-grid">
+
+            <button class="service-card">
+                <span class="service-icon"></span>
+                <span>Manage Student Records</span>
+            </button>
+
+            <button class="service-card">
+                <span class="service-icon"></span>
+                <span>Track Clinic Visits</span>
+            </button>
+
+            <button class="service-card">
+                <span class="service-icon"></span>
+                <span>Organized & Secure</span>
+            </button>
+
+        </div>
+
+
+        <!-- DOCTOR / PATIENT -->
+        <div class="illustration">
+
+            <div class="patient">
+                <div class="patient-head">
+                    <div class="hair"></div>
+
+                    <div class="face">
+                        <span class="eye left"></span>
+                        <span class="eye right"></span>
+                        <span class="mask"></span>
+                    </div>
+                </div>
+
+                <div class="patient-neck"></div>
+                <div class="patient-body"></div>
+                <div class="patient-arm"></div>
+            </div>
+
+
+            <div class="doctor">
+
+                <div class="doctor-head">
+                    <div class="doctor-hair"></div>
+
+                    <div class="doctor-face">
+                        <span class="eye left"></span>
+                        <span class="eye right"></span>
+                        <span class="mask"></span>
+                    </div>
+                </div>
+
+                <div class="doctor-neck"></div>
+                <div class="coat"></div>
+                <div class="doctor-arm"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN -->
+        <button class="login-button" onclick="login()">
+            LOG - IN
+        </button>
+
+    </section>
+
+    <div class="login-popup" id="loginModal" aria-hidden="true">
+        <div class="login-panel" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+            <button type="button" class="close-login" onclick="closeLogin()">×</button>
+            <h2 id="loginTitle">LOG IN</h2>
+            <div class="login-underline"></div>
+
+            <form class="login-form">
+                <label for="email">EMAIL OR USERNAME:</label>
+                <input id="email" type="text" name="email" autocomplete="username">
+
+                <label for="password">PASSWORD:</label>
+                <div class="password-wrap">
+                    <input id="password" type="password" name="password" autocomplete="current-password">
+                    <button type="button" class="eye-btn" aria-label="Show password">◉</button>
+                </div>
+
+                <p class="form-msg" id="loginError" role="alert"></p>
+
+                <a href="#" class="forgot-link" onclick="showForgotPassword(); return false;">Forgot Password?</a>
+
+                <div class="login-actions">
+                    <button type="button" class="cancel-btn" onclick="closeLogin()">CANCEL</button>
+                    <button type="submit" class="submit-btn">LOGIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="login-popup forgot-popup" id="forgotModal" aria-hidden="true">
+        <div class="login-panel forgot-panel" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+            <h2 id="forgotTitle">FORGOT PASSWORD</h2>
+            <div class="login-underline"></div>
+
+            <p class="forgot-instruction">
+                Enter the Email address associated with your account.<br>
+                We'll send you a one-time password(OTP) to reset your password.
+            </p>
+
+            <label for="forgotEmail">Enter Email to get OTP</label>
+            <input id="forgotEmail" type="email" name="forgotEmail" class="forgot-input">
+            <p class="form-msg" id="forgotError" role="alert"></p>
+
+            <div class="forgot-actions">
+                <button type="button" class="back-btn" onclick="showLoginAgain()">BACK</button>
+                <button type="button" class="next-btn" id="forgotNextBtn">NEXT</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-popup renew-popup" id="renewModal" aria-hidden="true">
+        <div class="login-panel renew-panel" role="dialog" aria-modal="true" aria-labelledby="renewTitle">
+            <h2 id="renewTitle">RE-NEW PASSWORD</h2>
+            <div class="login-underline"></div>
+
+            <label for="newPassword">New Password</label>
+            <div class="password-wrap">
+                <input id="newPassword" type="password" name="newPassword" class="renew-input">
+                <button type="button" class="eye-btn renew-eye" aria-label="Show new password">◉</button>
+            </div>
+
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="password-wrap">
+                <input id="confirmPassword" type="password" name="confirmPassword" class="renew-input">
+                <button type="button" class="eye-btn renew-eye-confirm" aria-label="Show confirm password">◉</button>
+            </div>
+
+            <p class="form-msg" id="renewError" role="alert"></p>
+
+            <div class="forgot-actions renew-actions">
+                <button type="button" class="back-btn" onclick="showForgotPassword()">BACK</button>
+                <button type="button" class="done-btn" onclick="finishRenewPassword()">DONE</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ABOUT US -->
+    <div class="info-container">
+
+        <!-- ABOUT US -->
+        <section id="about" class="info-section about-info">
+    
+            <div>
+                <p class="eyebrow">
+                    ABOUT US
+                </p>
+    
+                <h3>
+                    Clinic Administration
+                </h3>
+    
+                <p id="aboutText">
+                    The Clinic Administration Management System (CAMS)
+                    is a digital platform designed to help the school clinic
+                    efficiently manage student health records and daily clinic
+                    visits. It provides authorized clinic personnel with an
+                    organized and centralized way to record, update, and access
+                    essential student health information.
+                </p>
+            </div>
+    
+        </section>
+    
+    
+        <!-- OUR SERVICES -->
+        <section class="info-section services-info">
+    
+            <div>
+    
+                <p class="eyebrow">
+                    OUR SERVICES
+                </p>
+    
+                <h3>
+                    Our Services
+                </h3>
+    
+                <div class="services-list">
+    
+                    <div class="service-item">
+                        <div class="service-title">
+                            🩺 <strong>Student Health Records</strong>
+                        </div>
+                        <p>
+                            Manage and maintain students' School Health
+                            Examination Cards in one centralized system.
+                        </p>
+                    </div>
+    
+                    <div class="service-item">
+                        <div class="service-title">
+                            📋 <strong>Daily Treatment Records</strong>
+                        </div>
+                        <p>
+                            Record patient time-in, relevant information,
+                            treatment provided, and time-out for every
+                            clinic visit.
+                        </p>
+                    </div>
+    
+                    <div class="service-item">
+                        <div class="service-title">
+                            📖 <strong>Treatment History</strong>
+                        </div>
+                        <p>
+                            Review a student's previous clinic visits and
+                            treatment records for easier reference.
+                        </p>
+                    </div>
+    
+                    <div class="service-item">
+                        <div class="service-title">
+                            🔐 <strong>Secure Record Management</strong>
+                        </div>
+                        <p>
+                            Keep student health information accessible only
+                            to authorized clinic personnel.
+                        </p>
+                    </div>
+    
+                </div>
+    
+            </div>
+    
+        </section>
+    
+    </div>
+
+
+    <!-- ORGANIZATIONAL CHART -->
+    <section id="organization" class="info-section alternate">
+
+        <div>
+
+            <p class="eyebrow">
+                ORGANIZATIONAL CHART
+            </p>
+
+            <h3>
+                Connected people. Better care.
+            </h3>
+
+            <p>
+                Build a clear structure for administrators,
+                nurses, clinic staff, teachers, and student
+                support teams.
+            </p>
+            <img id="orgChartImg" src="images/organizational-chart.png"
+            alt="Organizational Chart"
+            class="organizational-chart-image" onerror="this.style.display='none'">
+        </div>
+
+    </section>
+
+
+    <!-- MISSION -->
+    <!-- MISSION, VISION & COMMITMENT -->
+<section id="mission" class="info-section alternate">
+
+    <div class="mission-container">
+
+        <p class="eyebrow">
+            MISSION, VISION & COMMITMENT
+        </p>
+
+        <h3>
+            Our Purpose
+        </h3>
+
+        <div class="mission-boxes">
+
+            <div class="mission-box">
+                <h4>Mission</h4>
+                <p id="missionText">The School Health and Nutrition Section is committed to provide effective health and nutrition service and to utilize these service as fertile Awareness for the inculcation of positive health values and behavior pursued with the spirit of dedication, high sense of mission and excellence towards the Development of a healthier and productive school populace in a clean healthy and Drug-free school and community environment.</p>
+            </div>
+
+            <div class="mission-box">
+                <h4>Vision</h4>
+                <p id="visionText">The coming of the New Millennium will see dynamic innovation and service-oriented school health personnel that can help provide access to health and nutrition education activities, develop health habits and attitude among school populace that will make them capable of facing the challenge of the 21st century.</p>
+            </div>
+
+            <div class="mission-box">
+                <h4>Commitment</h4>
+                <p id="commitmentText">The School Health and Nutrition Section is committed to attain and maintain a healthy environment with the aim in view of having a physically and mentally fit citizenry.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <!-- PROTOCOLS -->
+    <section id="protocols" class="info-section alternate">
+
+        <div>
+
+            <p class="eyebrow">
+                PROTOCOLS
+            </p>
+
+            <div class="protocol-images">
+                <img id="protocolImg1" src="images/p1.png" alt="Physical Health Referral Protocol" onerror="this.style.display='none'">
+                <img id="protocolImg2" src="images/p2.png" alt="Psychological Conditions Referral Protocol" onerror="this.style.display='none'">
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <span>
+            <a href="terms.html">Terms & Services</a> | <a href="privacy.html">Privacy Policy</a>
+        </span>
+
+        <span>
+            @ Pasay City South High School. All Rights Reserved.
+        </span>
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>

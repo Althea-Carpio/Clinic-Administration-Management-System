@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Administrator Dashboard | CAMS</title>
+
+  <!-- Google Fonts & Etna Font Fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/pvl8vxl.css"><!-- external fonts are optional: page works offline with fallback fonts -->
+
+  <style>
+    @font-face {
+      font-family: 'Etna';
+      src: local('Etna'), local('Etna-Bold'), local('Etna Sans Serif');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Etna', 'Montserrat', 'Fredoka', 'Arial Black', sans-serif;
+      text-transform: uppercase;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============================================================ */
+    /* MAINFRAME                                                    */
+    /* ============================================================ */
+
+    body {
+      background-color: #91abc9; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* FULL WIDTH TOP NAVIGATION BAR */
+    .header {
+      width: 100%;
+      background-color: #212b5F;
+      padding: 30px 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-title {
+      color: #ffffff;
+      font-size: 65px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 0px #000000,
+                  2px 2px 0px #000000,
+                  3px 3px 0px #000000,
+                  4px 4px 0px #000000,
+                  5px 5px 0px #000000,
+                  6px 6px 0px #000000,
+                  7px 7px 0px #000000;
+    }
+
+    .menu-btn {
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #000000;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* DASHBOARD BODY CONTAINER */
+    .dashboard-container {
+      background-color: #212b5F;
+      width: 100%;
+      max-width: 1550px;
+      border-radius: 20px;
+      padding: 30px;
+      margin: 100px 70px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    } 
+
+    body.drawer-open .dashboard-container {
+      transform: translateX(-140px) scale(0.95);
+    }
+
+    /* Grid Layout for Side-by-Side Sections */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .column-title {
+      color: #ffffff;
+      font-size: 50px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 14px;
+      letter-spacing: 1.5px;
+      text-shadow: 2px 2px 0px #000000,
+                    3px 3px 0px #000000,
+                    4px 4px 0px #000000,
+                    5px 5px 0px #000000; 
+    }
+
+    /* Content Cards */
+    .card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 18px;
+      min-height: 450px;
+      display: flex;
+      flex-direction: column;
+      border: 3px solid #000000;
+      box-shadow: inset 0 0 0 2px #ffffff;
+    }
+
+    /* Filter Bar (Accounts Header) */
+    .filter-bar {
+      border: 3px solid #000000;
+      border-radius: 12px;
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      background-color: #ffffff;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+    }
+
+    .dot.green { background-color: #00bf63; }
+    .dot.red { background-color: #ff3131; }
+
+    /* List Rows */
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+
+    .list-row {
+      border: 2px solid #000000;
+      border-radius: 13px;
+      padding: 15px 21px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff;
+    }
+
+    .list-row.gray-bg {
+      background-color: #e0e0e0;
+    }
+
+    .site-label {
+      font-size: 20px;
+      font-weight: 900;
+      color: #000000;
+      letter-spacing: 0.5px;
+    }
+
+    /* ============================================================ */
+    /* ACCOUNT BAR INTERACTIVE STYLES                               */
+    /* ============================================================ */
+
+    .account-card-item {
+      border: 3px solid #000000;
+      border-radius: 35px;
+      background-color: #ffffff;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .account-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .account-bar:hover {
+      background-color: #f5f5f5;
+    }
+
+    .account-name {
+      font-size: 24px;
+      font-weight: 900;
+      color: #000000;
+      letter-spacing: 0.5px;
+    }
+
+    .account-status-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #000000;
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    .account-status-dot.active {
+      background-color: #00bf63;
+    }
+
+    .account-status-dot.inactive {
+      background-color: #ff3131;
+    }
+
+    .account-actions-drawer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+      background-color: #ffffff;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      border-top: 0px solid transparent;
+    }
+
+    .account-card-item.expanded .account-actions-drawer {
+      max-height: 80px;
+      padding: 10px 18px 14px 18px;
+      border-top: 2px solid #000000;
+    }
+
+    .account-btn {
+      background-color: #000000;
+      color: #ffffff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.1;
+      text-decoration: none;
+      transition: transform 0.1s ease, background-color 0.2s;
+    }
+
+    .account-btn:hover {
+      transform: scale(1.05);
+      background-color: #222222;
+    }
+
+    .account-btn.btn-remove {
+      background-color: #cc0000;
+    }
+
+    .account-btn.btn-remove:hover {
+      background-color: #990000;
+    }
+
+    /* Action Buttons */
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      background-color: #000000;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      line-height: 1.1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-width: 62px;
+      transition: transform 0.1s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.2);
+    }
+
+    /* Bottom Button Placement */
+    .card-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+      text-align: center;
+    }
+
+    .btn-new-account {
+      padding: 10px 200px;
+      font-size: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* ============================================================ */
+    /* DROPDOWN FOR STATUS                                          */
+    /* ============================================================ */
+
+    .status-select {
+      font-family: 'Etna', 'Montserrat', 'Fredoka', 'Arial Black', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      border: 2px solid #000000;
+      border-radius: 8px;
+      padding: 2px 8px;
+      background-color: #ffffff;
+      cursor: pointer;
+      outline: none;
+      text-transform: uppercase;
+    }
+
+    /* ============================================================ */
+    /* MODAL OVERLAYS & POPUPS                                      */
+    /* ============================================================ */
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease-in-out;
+      z-index: 9999;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-container {
+      background-color: #1c2b5c;
+      border: 4px solid #8ba8cd;
+      border-radius: 24px;
+      padding: 24px 28px 28px 28px;
+      width: 480px;
+      max-width: 90%;
+      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    .modal-title {
+      color: #ffffff;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      text-shadow: 3px 3px 0px #000000;
+    }
+
+    .modal-card {
+      background-color: #ffffff;
+      border: 4px solid #757575;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-row {
+      display: flex;
+      border-bottom: 3px solid #757575;
+      min-height: 52px;
+      align-items: center;
+    }
+
+    .form-row:last-child {
+      border-bottom: none;
+    }
+
+    .form-row.gray-row {
+      background-color: #d8d8d8;
+    }
+
+    .form-label {
+      width: 42%;
+      padding: 10px 12px;
+      font-weight: 900;
+      font-size: 13px;
+      color: #000000;
+      text-align: left;
+      border-right: 3px solid #757575;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-value {
+      width: 58%;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .form-value input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000000;
+      text-transform: none;
+      padding-right: 25px;
+    }
+
+    .form-value .toggle-eye {
+      position: absolute;
+      right: 10px;
+      cursor: pointer;
+      color: #000000;
+    }
+
+    .modal-button-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding: 18px 12px;
+      background-color: #ffffff;
+    }
+
+    .modal-btn {
+      background-color: #000000;
+      color: #ffffff;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 28px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .modal-btn:hover {
+      background-color: #222222;
+    }
+
+    .modal-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* EDIT & VIEW SITE INFO POPUPS */
+    .edit-modal-card, .view-modal-card {
+      background-color: #ffffff;
+      border: 4px solid #757575;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .edit-modal-header, .view-modal-header {
+      background-color: #ffffff;
+      border-bottom: 3px solid #757575;
+      padding: 8px 10px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 900;
+      color: #000000;
+      letter-spacing: 1px;
+    }
+
+    .edit-modal-body, .view-modal-body {
+      padding: 14px;
+      background-color: #ffffff;
+    }
+
+    .edit-textarea {
+      width: 100%;
+      height: 220px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 800;
+      color: #000000;
+      line-height: 1.35;
+      text-transform: none;
+      padding-right: 8px;
+    }
+
+    .view-content-box {
+      width: 100%;
+      max-height: 220px;
+      overflow-y: auto;
+      font-size: 15px;
+      font-weight: 800;
+      color: #000000;
+      line-height: 1.35;
+      text-transform: none;
+      text-align: left;
+      padding-right: 8px;
+    }
+
+    /* IMAGE UPLOAD & VIEW MODAL STYLES */
+    .image-upload-zone {
+      border: 3px dashed #757575;
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .image-upload-zone:hover {
+      background-color: #ececec;
+      border-color: #000000;
+    }
+
+    .upload-icon-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: #333333;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .hidden-file-input { display: none; }
+
+    .btn-choose-file {
+      background-color: #000000;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .image-preview-container {
+      width: 100%;
+      max-height: 200px;
+      min-height: 120px;
+      border: 2px solid #757575;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background-color: #e0e0e0;
+    }
+
+    .preview-img {
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      display: none;
+    }
+
+    .preview-placeholder {
+      font-size: 13px;
+      font-weight: 800;
+      color: #666666;
+    }
+
+    .view-image-display {
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 10px;
+      display: none;
+      margin: 0 auto;
+    }
+
+    /* SLIDE-IN MENU DRAWER */
+    .side-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 320px;
+      height: 100vh;
+      background-color: #004aad;
+      border-left: 6px solid #004aad;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+    }
+
+    body.drawer-open .side-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-content {
+      background-color: #ffffff;
+      border-radius: 30px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      position: relative;
+    }
+
+    .drawer-close-btn {
+      width: 42px;
+      height: 42px;
+      background-color: #000000;
+      color: #ffffff;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-bottom: 25px;
+    }
+
+    .drawer-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #000000;
+      text-align: center;
+      position: relative;
+      padding-bottom: 12px;
+      margin-bottom: 35px;
+      letter-spacing: 1px;
+    }
+
+    .drawer-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15%;
+      width: 70%;
+      height: 3px;
+      background-color: #91abc9;
+      border-radius: 2px;
+    }
+
+    .drawer-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 0;
+    }
+
+    .drawer-icon-circle {
+      width: 52px;
+      height: 52px;
+      background-color: #000000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .drawer-item-text {
+      font-size: 20px;
+      font-weight: 900;
+      color: #000000;
+      line-height: 1.1;
+      text-decoration: none;
+    }
+
+    .drawer-logout {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding-bottom: 10px;
+    }
+
+    .drawer-logout .drawer-item-text {
+      text-decoration: none;
+    }
+
+    /* DIALOG CARDS */
+    .popup-dialog-card {
+      background-color: #8fa8cc;
+      border: 4px solid #1c2b5c;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .popup-dialog-title {
+      font-size: 42px;
+      font-weight: 900;
+      color: #000000;
+      text-align: center;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .popup-divider {
+      width: 80%;
+      height: 2px;
+      background-color: #000000;
+      margin: 0 auto 20px auto;
+    }
+
+    .otp-instructions {
+      text-align: left;
+      font-size: 13px;
+      font-weight: 800;
+      color: #000000;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      text-transform: none;
+    }
+
+    .otp-instructions li {
+      margin-left: 18px;
+      margin-bottom: 6px;
+    }
+
+    .otp-field-label {
+      text-align: left;
+      font-size: 15px;
+      font-weight: 900;
+      color: #000000;
+      margin-bottom: 6px;
+    }
+
+    .otp-input-box {
+      width: 100%;
+      padding: 12px;
+      background-color: #d1d9e6;
+      border: 2px solid #000000;
+      font-size: 16px;
+      font-weight: 800;
+      outline: none;
+      margin-bottom: 8px;
+    }
+
+    .otp-timer-text {
+      text-align: left;
+      font-size: 13px;
+      font-weight: 800;
+      color: #000000;
+      margin-bottom: 14px;
+    }
+
+    .otp-resend-link {
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .input-with-icon {
+      position: relative;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+
+    .input-with-icon input {
+      width: 100%;
+      padding: 10px 40px 10px 12px;
+      background-color: #d1d9e6;
+      border: 2px solid #000000;
+      font-size: 15px;
+      font-weight: 800;
+      outline: none;
+      text-transform: none;
+    }
+
+    .input-with-icon .toggle-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #000000;
+    }
+
+    .action-btn-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      gap: 16px;
+    }
+
+    .btn-dialog {
+      background-color: #1c2b5c;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 28px;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 140px;
+    }
+
+    .warning-pill {
+      background-color: #000000;
+      color: #ffd700;
+      font-size: 28px;
+      font-weight: 900;
+      padding: 8px;
+      border-radius: 30px;
+      text-align: center;
+      margin: 16px 0;
+      letter-spacing: 2px;
+    }
+
+    .warning-desc {
+      text-align: left;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+      text-transform: none;
+      margin-bottom: 14px;
+    }
+
+    .school-year-input {
+      width: 100%;
+      max-width: 280px;
+      padding: 10px;
+      border-radius: 25px;
+      border: none;
+      outline: none;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 800;
+      margin: 0 auto 16px auto;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <h1 class="header-title">SITE ADMINISTRATOR</h1>
+    <button class="menu-btn" id="openDrawerBtn" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg> 
+    </button>
+  </header>
+
+  <!-- DASHBOARD CONTENT -->
+  <div class="dashboard-container">
+    <main class="dashboard-grid">
+        
+    <!-- MANAGE ACCOUNTS SECTION -->
+    <section>
+      <h2 class="column-title">MANAGE ACCOUNTS</h2>
+      <div class="card">
+        <div class="filter-bar">
+          <div class="status-indicator">
+            <span>ACTIVE ACCOUNT</span>
+            <span class="dot green"></span>
+          </div>
+          <div class="status-indicator">
+            <span>INACTIVE ACCOUNT</span>
+            <span class="dot red"></span>
+          </div>
+      
+          <!-- Dropdown Filter -->
+          <select id="statusFilter" class="status-select">
+            <option value="ALL">NONE</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+          </select>
+        </div>
+
+        <!-- Account Cards Container -->
+        <div class="list-container" id="accountListContainer"></div>
+
+        <div class="card-footer">
+          <button class="btn btn-new-account" id="openAccountModalBtn">
+            <span> + NEW ACCOUNT</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANAGE SITE SECTION -->
+    <section>
+      <h2 class="column-title">MANAGE SITE</h2>
+      <div class="card">
+        <div class="list-container">
+          
+          <div class="list-row">
+            <span class="site-label">ABOUT</span>
+            <div class="actions">
+              <button class="btn" id="viewAboutBtn">VIEW</button>
+              <button class="btn" id="editAboutBtn">EDIT</button>
+            </div>
+          </div>
+
+          <div class="list-row gray-bg">
+            <span class="site-label">MISSION</span>
+            <div class="actions">
+              <button class="btn" id="viewMissionBtn">VIEW</button>
+              <button class="btn" id="editMissionBtn">EDIT</button>
+            </div>
+          </div>
+
+          <div class="list-row">
+            <span class="site-label">VISION</span>
+            <div class="actions">
+              <button class="btn" id="viewVisionBtn">VIEW</button>
+              <button class="btn" id="editVisionBtn">EDIT</button>
+            </div>
+          </div>
+
+          <div class="list-row gray-bg">
+            <span class="site-label">COMMITMENT</span>
+            <div class="actions">
+              <button class="btn" id="viewCommitmentBtn">VIEW</button>
+              <button class="btn" id="editCommitmentBtn">EDIT</button>
+            </div>
+          </div>
+
+          <div class="list-row">
+            <span class="site-label">ORGANIZATIONAL CHART</span>
+            <div class="actions">
+              <button class="btn" id="viewOrgChartBtn">VIEW</button>
+              <button class="btn" id="editOrgChartBtn">UPDATE</button>
+            </div>
+          </div>
+
+          <div class="list-row gray-bg">
+            <span class="site-label">PHYSICAL HEALTH REFERRAL PROTOCOL</span>
+            <div class="actions">
+              <button class="btn" id="viewPhysicalHealthBtn">VIEW</button>
+              <button class="btn" id="editPhysicalHealthBtn">UPDATE</button>
+            </div>
+          </div>
+
+          <div class="list-row">
+            <span class="site-label">PSYCHOLOGICAL REFERRAL PROTOCOL</span>
+            <div class="actions">
+              <button class="btn" id="viewReferralBtn">VIEW</button>
+              <button class="btn" id="editReferralBtn">UPDATE</button>
+            </div>
+          </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- SLIDE-IN MENU DRAWER -->
+  <aside class="side-drawer" id="sideDrawer">
+    <div class="drawer-content">
+      <button class="drawer-close-btn" id="closeDrawerBtn" aria-label="Close menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <h2 class="drawer-title">SITE ADMIN</h2>
+
+      <div class="drawer-menu-list">
+        <button class="drawer-item" id="drawerChangeEmailBtn">
+          <div class="drawer-icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <span class="drawer-item-text">CHANGE<br>EMAIL</span>
+        </button>
+
+        <button class="drawer-item" id="drawerChangePasswordBtn">
+          <div class="drawer-icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2l-2 2m-1.5 1.5L4 19.5V22h2.5L20.5 8.5M16 5l3 3"></path>
+              <circle cx="8" cy="8" r="5"></circle>
+            </svg>
+          </div>
+          <span class="drawer-item-text">CHANGE<br>PASSWORD</span>
+        </button>
+
+        <button class="drawer-item" id="drawerNewSchoolYearBtn">
+          <div class="drawer-icon-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18M3 7l9-4 9 4v14H3V7z"></path>
+              <path d="M9 21v-4a3 3 0 0 1 6 0v4"></path>
+            </svg>
+          </div>
+          <span class="drawer-item-text">NEW SCHOOL<br>YEAR</span>
+        </button>
+      </div>
+
+      <button class="drawer-logout" id="logoutBtn" aria-label="Log out">
+        <div class="drawer-icon-circle" style="background:none; border:2px solid #000; color:#000;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </div>
+        <span class="drawer-item-text">LOG OUT</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ADD NEW ACCOUNT MODAL -->
+  <div class="modal-overlay" id="addAccountModal">
+    <div class="modal-container">
+      <h1 class="modal-title">ADD ACCOUNT</h1>
+      <div class="modal-card">
+        <div class="form-row">
+          <div class="form-label">EMAIL</div>
+          <div class="form-value">
+            <input type="email" id="newAccountEmail" placeholder="Enter email">
+          </div>
+        </div>
+        <div class="form-row gray-row">
+          <div class="form-label">USERNAME</div>
+          <div class="form-value">
+            <input type="text" id="newAccountUsername" placeholder="Enter username">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-label">PASSWORD</div>
+          <div class="form-value">
+            <input type="password" id="newAccountPassword" placeholder="Enter password">
+            <span class="toggle-eye" role="button" tabindex="0" aria-label="Show or hide password" onclick="togglePasswordVisibility('newAccountPassword', this)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div class="form-row gray-row">
+          <div class="form-label">CONFIRM PASSWORD</div>
+          <div class="form-value">
+            <input type="password" id="newAccountConfirmPassword" placeholder="Confirm password">
+            <span class="toggle-eye" role="button" tabindex="0" aria-label="Show or hide password" onclick="togglePasswordVisibility('newAccountConfirmPassword', this)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-button-group" style="background: transparent; padding-top: 20px;">
+        <button class="modal-btn" id="cancelAddAccountBtn">CANCEL</button>
+        <button class="modal-btn" id="saveAccountBtn">ADD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PASSWORD VERIFICATION MODAL FOR ACCOUNT DELETION -->
+  <div class="modal-overlay" id="adminVerifyModal">
+    <div class="modal-container" style="width: 520px; background-color: #1c2b5c; border-color: #8fa8cc;">
+      <h2 style="color: #ffffff; font-size: 32px; font-weight: 900; text-shadow: 2px 2px 0 #000; margin-bottom: 16px;">VERIFY ADMIN PASSWORD</h2>
+
+      <p class="warning-desc" style="text-align: center; margin-bottom: 16px;">
+        Please enter your administrator password to confirm account deletion.
+      </p>
+
+      <input type="password" id="adminConfirmPasswordInput" class="school-year-input" placeholder="••••••••" aria-label="Administrator password">
+
+      <div style="display: flex; justify-content: center; gap: 16px; margin-top: 20px;">
+        <button class="modal-btn" id="cancelDeleteBtn" style="background-color: #757575;">CANCEL</button>
+        <button class="modal-btn" id="confirmDeleteBtn" style="background-color: #cc0000;">DELETE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OTP VERIFICATION MODAL -->
+  <div class="modal-overlay" id="otpModal">
+    <div class="modal-container" style="width: 520px;">
+      <div class="popup-dialog-card">
+        <h2 class="popup-dialog-title">ENTER OTP</h2>
+        <div class="popup-divider"></div>
+
+        <ul class="otp-instructions">
+          <li>We've sent a one-time password (OTP) to your registered email.</li>
+          <li>Please enter the 6-digit verification code below to continue.</li>
+          <li>Demo mode (offline): no email is actually sent, any 6-digit code is accepted.</li>
+        </ul>
+
+        <div class="otp-field-label">Enter OTP Code</div>
+        <input type="text" class="otp-input-box" id="otpCodeInput" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric" aria-label="OTP code">
+
+        <div class="otp-timer-text">
+          <span class="otp-resend-link" id="resendOtpBtn" style="pointer-events: none; opacity: 0.6;">Resend OTP Code:</span> 
+          <span id="timerSeconds">50</span> seconds
+        </div>
+
+        <ul class="otp-instructions" style="font-size: 11px;">
+          <li>Didn't receive the code? Check your spam or junk folder, or click Resend OTP to receive a new code.</li>
+        </ul>
+
+        <div class="action-btn-row">
+          <button class="btn-dialog" id="cancelOtpBtn">CANCEL</button>
+          <button class="btn-dialog" id="nextOtpBtn">
+            NEXT 
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RE-NEW EMAIL MODAL -->
+  <div class="modal-overlay" id="renewEmailModal">
+    <div class="modal-container" style="width: 520px;">
+      <div class="popup-dialog-card">
+        <h2 class="popup-dialog-title">RE-NEW EMAIL</h2>
+        <div class="popup-divider"></div>
+
+        <div class="otp-field-label">New Email</div>
+        <div class="input-with-icon">
+          <input type="email" id="newEmailInput" placeholder="Enter new email address">
+        </div>
+
+        <div class="otp-field-label">Confirm Email</div>
+        <div class="input-with-icon">
+          <input type="email" id="confirmEmailInput" placeholder="Confirm new email address">
+        </div>
+
+        <div class="action-btn-row">
+          <button class="btn-dialog" id="backRenewEmailBtn">BACK</button>
+          <button class="btn-dialog" id="doneRenewEmailBtn">DONE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RE-NEW PASSWORD MODAL -->
+  <div class="modal-overlay" id="renewPasswordModal">
+    <div class="modal-container" style="width: 520px;">
+      <div class="popup-dialog-card">
+        <h2 class="popup-dialog-title">RE-NEW PASSWORD</h2>
+        <div class="popup-divider"></div>
+
+        <div class="otp-field-label">New Password</div>
+        <div class="input-with-icon">
+          <input type="password" id="newPassInput" placeholder="Enter new password">
+        </div>
+
+        <div class="otp-field-label">Confirm Password</div>
+        <div class="input-with-icon">
+          <input type="password" id="confirmPassInput" placeholder="Confirm new password">
+        </div>
+
+        <div class="action-btn-row">
+          <button class="btn-dialog" id="backRenewPassBtn">BACK</button>
+          <button class="btn-dialog" id="doneRenewPassBtn">DONE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW SCHOOL YEAR MODAL -->
+  <div class="modal-overlay" id="newSchoolYearModal">
+    <div class="modal-container" style="width: 520px; background-color: #1c2b5c; border-color: #8fa8cc;">
+      <div style="position: relative; text-align: left; margin-bottom: 12px;">
+        <button id="closeSchoolYearModalBtn" style="background: #ffffff; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <h2 style="color: #ffffff; font-size: 32px; font-weight: 900; text-shadow: 2px 2px 0 #000; margin-bottom: 16px;">INPUT PASSWORD TO CONFIRM</h2>
+
+      <input type="password" class="school-year-input" id="schoolYearPassword" placeholder="••••••••" aria-label="Administrator password">
+
+      <div class="warning-pill">WARNING</div>
+
+      <p class="warning-desc">
+        Enter your administrator password to verify your identity and authorize the renewal of the school year.
+      </p>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button class="modal-btn" id="confirmSchoolYearBtn" style="background-color: #000000; padding: 12px 32px; border-radius: 12px; font-size: 22px;">CONFIRM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT SITE TEXT MODAL -->
+  <div class="modal-overlay" id="editMissionModal">
+    <div class="modal-container">
+      <h1 class="modal-title">EDIT SITE INFO</h1>
+      <div class="edit-modal-card">
+        <div class="edit-modal-header" id="siteInfoModalTitle">MISSION</div>
+        <div class="edit-modal-body">
+          <textarea class="edit-textarea" id="missionTextarea"></textarea>
+        </div>
+      </div>
+      <div class="modal-button-group" style="background: transparent; padding-top: 20px;">
+        <button class="modal-btn" id="cancelMissionBtn">CANCEL</button>
+        <button class="modal-btn" id="doneMissionBtn">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW SITE TEXT MODAL -->
+  <div class="modal-overlay" id="viewMissionModal">
+    <div class="modal-container">
+      <h1 class="modal-title">VIEW SITE INFO</h1>
+      <div class="view-modal-card">
+        <div class="view-modal-header" id="viewSiteInfoModalTitle">MISSION</div>
+        <div class="view-modal-body">
+          <div class="view-content-box" id="viewMissionContent"></div>
+        </div>
+      </div>
+      <div class="modal-button-group" style="background: transparent; padding-top: 20px;">
+        <button class="modal-btn" id="goBackMissionBtn">GO BACK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT IMAGE MODAL -->
+  <div class="modal-overlay" id="editImageModal">
+    <div class="modal-container">
+      <h1 class="modal-title">UPDATE IMAGE</h1>
+      <div class="edit-modal-card">
+        <div class="edit-modal-header" id="editImageModalTitle">ORGANIZATIONAL CHART</div>
+        <div class="edit-modal-body">
+          <div class="image-upload-zone" id="uploadDropZone">
+            <span class="upload-icon-label">DRAG & DROP IMAGE HERE OR</span>
+            <button class="btn-choose-file" type="button" id="triggerFileBtn">CHOOSE FILE</button>
+            <input type="file" id="imageFileInput" class="hidden-file-input" accept="image/*" />
+          </div>
+          <div class="image-preview-container">
+            <span class="preview-placeholder" id="previewPlaceholder">NO IMAGE SELECTED</span>
+            <img src="" alt="Preview" class="preview-img" id="imagePreview" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-button-group" style="background: transparent; padding-top: 20px;">
+        <button class="modal-btn" id="cancelImageBtn">CANCEL</button>
+        <button class="modal-btn" id="saveImageBtn">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW IMAGE MODAL -->
+  <div class="modal-overlay" id="viewImageModal">
+    <div class="modal-container">
+      <h1 class="modal-title">VIEW SITE INFO</h1>
+      <div class="view-modal-card">
+        <div class="view-modal-header" id="viewImageModalTitle">ORGANIZATIONAL CHART</div>
+        <div class="view-modal-body">
+          <span class="preview-placeholder" id="noImageViewText">NO IMAGE UPLOADED YET</span>
+          <img src="" alt="View Image" class="view-image-display" id="viewImageDisplay" />
+        </div>
+      </div>
+      <div class="modal-button-group" style="background: transparent; padding-top: 20px;">
+        <button class="modal-btn" id="goBackImageBtn">GO BACK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="database.js"></script>
+  <script>
+    /* Fallback so this page still runs if database.js is missing (memory only, no login gate). */
+    if (typeof window.DB === 'undefined') {
+      (function () {
+        var m = { accounts: [
+          { id: 1, email: 'admin@cams.local', username: 'ADMIN', password: 'admin', status: 'active', role: 'admin' },
+          { id: 2, email: 'nurse@cams.local', username: 'NURSE', password: 'nurse', status: 'active', role: 'nurse' }
+        ], site: {}, images: {}, session: null };
+        var DEF = {
+          ABOUT: 'The Clinic Administration Management System (CAMS) is a digital platform designed to help the school clinic efficiently manage student health records and daily clinic visits.',
+          MISSION: 'The School Health and Nutrition Section is committed to provide effective health and nutrition service.',
+          VISION: 'The coming of the New Millennium will see dynamic innovation and service-oriented school health personnel.',
+          COMMITMENT: 'The School Health and Nutrition Section is committed to attain and maintain a healthy environment.'
+        };
+        window.DB = {
+          persistent: false,
+          getAccounts: function () { return m.accounts; }, saveAccounts: function (a) { m.accounts = a; },
+          getSite: function () { var o = {}; for (var k in DEF) o[k] = m.site[k] || DEF[k]; return o; }, saveSite: function (o) { m.site = o; },
+          getImages: function () { return m.images; }, saveImages: function (o) { m.images = o; },
+          getSession: function () { return m.session; }, setSession: function (o) { m.session = o; }, clearSession: function () { m.session = null; }
+        };
+        window.requireLogin = function () { return null; };
+      })();
+    }
+  </script>
+  <script>
+    'use strict';
+    /* ====================== SESSION / HELPERS ====================== */
+    const SESSION = requireLogin('admin');
+
+    function esc(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function getMe() {
+      const list = DB.getAccounts();
+      if (SESSION) return list.find(function (a) { return a.id === SESSION.id; }) || null;
+      return list.find(function (a) { return a.role === 'admin'; }) || null;
+    }
+    function refreshSession(acct) {
+      if (SESSION && acct) {
+        SESSION.username = acct.username; SESSION.email = acct.email;
+        DB.setSession({ id: acct.id, username: acct.username, email: acct.email, role: acct.role });
+      }
+    }
+    function verifyAdminPassword(pw) {
+      const me = getMe();
+      return !!me && pw === me.password;
+    }
+    function openModal(el) { el.classList.add('active'); }
+    function closeModal(el) { el.classList.remove('active'); }
+    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    /* ====================== ACCOUNTS ====================== */
+    const ADMIN_PASSWORD_NOTE = 'Uses the logged-in administrator password';
+    let targetAccountIdForDeletion = null;
+
+    const addAccountModal = document.getElementById('addAccountModal');
+    const accountListContainer = document.getElementById('accountListContainer');
+    const statusFilter = document.getElementById('statusFilter');
+    const expandedIds = new Set();
+
+    function renderAccounts() {
+      const accounts = DB.getAccounts();
+      const me = getMe();
+      const filter = statusFilter.value.toLowerCase();
+      accountListContainer.innerHTML = accounts.map(function (a) {
+        const hidden = filter !== 'all' && a.status !== filter;
+        const isMe = me && me.id === a.id;
+        return '<div class="account-card-item' + (expandedIds.has(a.id) ? ' expanded' : '') + '" data-id="' + a.id + '" data-status="' + a.status + '"' + (hidden ? ' style="display:none"' : '') + '>' +
+          '<div class="account-bar" data-act="expand" role="button" tabindex="0" aria-label="Toggle actions for ' + esc(a.username) + '">' +
+            '<span class="account-name" title="' + esc(a.email) + '">' + esc(a.username.toUpperCase()) + (isMe ? ' (YOU)' : '') + '</span>' +
+            '<span class="account-status-dot ' + a.status + '" aria-label="' + a.status + '"></span>' +
+          '</div>' +
+          '<div class="account-actions-drawer">' +
+            '<button class="account-btn" data-act="status"><span>ACTIVE/</span><span>INACTIVE</span></button>' +
+            '<button class="account-btn" data-act="email"><span>CHANGE</span><span>EMAIL</span></button>' +
+            '<button class="account-btn btn-remove" data-act="remove"><span>REMOVE</span><span>ACCOUNT</span></button>' +
+          '</div></div>';
+      }).join('') || '<p style="text-align:center;font-weight:800">NO ACCOUNTS</p>';
+    }
+
+    accountListContainer.addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-act]');
+      const card = e.target.closest('.account-card-item');
+      if (!btn || !card) return;
+      const id = +card.dataset.id;
+      const act = btn.dataset.act;
+      if (act === 'expand') {
+        if (expandedIds.has(id)) expandedIds.delete(id); else expandedIds.add(id);
+        card.classList.toggle('expanded');
+      } else if (act === 'status') toggleAccountStatus(id);
+      else if (act === 'email') changeAccountEmail(id);
+      else if (act === 'remove') initiateAccountRemoval(id);
+    });
+    accountListContainer.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.account-bar')) { e.preventDefault(); e.target.click(); }
+    });
+
+    function toggleAccountStatus(id) {
+      const me = getMe();
+      if (me && me.id === id) { alert('You cannot deactivate the account you are logged in with.'); return; }
+      const list = DB.getAccounts();
+      const a = list.find(function (x) { return x.id === id; });
+      if (!a) return;
+      a.status = a.status === 'active' ? 'inactive' : 'active';
+      DB.saveAccounts(list);
+      renderAccounts();
+    }
+
+    function changeAccountEmail(id) {
+      const list = DB.getAccounts();
+      const a = list.find(function (x) { return x.id === id; });
+      if (!a) return;
+      const input = prompt('Enter new email address for ' + a.username + ':', a.email);
+      if (input === null) return;
+      const v = input.trim();
+      if (!isEmail(v)) { alert('Please enter a valid email address.'); return; }
+      if (list.some(function (x) { return x.id !== id && x.email.toLowerCase() === v.toLowerCase(); })) { alert('That email is already used by another account.'); return; }
+      a.email = v;
+      DB.saveAccounts(list);
+      refreshSession(getMe());
+      alert('Email updated to: ' + v);
+      renderAccounts();
+    }
+
+    function initiateAccountRemoval(id) {
+      const me = getMe();
+      if (me && me.id === id) { alert('You cannot remove the account you are logged in with.'); return; }
+      const a = DB.getAccounts().find(function (x) { return x.id === id; });
+      if (!a) return;
+      if (confirm('Are you sure you want to delete/remove the account: ' + a.username + '?')) {
+        targetAccountIdForDeletion = id;
+        document.getElementById('adminConfirmPasswordInput').value = '';
+        openModal(document.getElementById('adminVerifyModal'));
+      }
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+      const pw = document.getElementById('adminConfirmPasswordInput').value;
+      if (!pw) { alert('Please enter your administrator password.'); return; }
+      if (!verifyAdminPassword(pw)) { alert('Incorrect administrator password. Account removal canceled.'); return; }
+      DB.saveAccounts(DB.getAccounts().filter(function (a) { return a.id !== targetAccountIdForDeletion; }));
+      targetAccountIdForDeletion = null;
+      closeModal(document.getElementById('adminVerifyModal'));
+      alert('Account removed successfully.');
+      renderAccounts();
+    });
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function () {
+      targetAccountIdForDeletion = null;
+      closeModal(document.getElementById('adminVerifyModal'));
+    });
+
+    document.getElementById('openAccountModalBtn').addEventListener('click', function () {
+      ['newAccountEmail', 'newAccountUsername', 'newAccountPassword', 'newAccountConfirmPassword'].forEach(function (id) {
+        document.getElementById(id).value = '';
+      });
+      openModal(addAccountModal);
+    });
+    document.getElementById('cancelAddAccountBtn').addEventListener('click', function () { closeModal(addAccountModal); });
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+    document.querySelectorAll('.toggle-eye').forEach(function (el) {
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+    });
+
+    document.getElementById('saveAccountBtn').addEventListener('click', function () {
+      const email = document.getElementById('newAccountEmail').value.trim();
+      const username = document.getElementById('newAccountUsername').value.trim();
+      const password = document.getElementById('newAccountPassword').value;
+      const confirmPassword = document.getElementById('newAccountConfirmPassword').value;
+
+      if (!email || !username || !password || !confirmPassword) { alert('Please fill out all fields.'); return; }
+      if (!isEmail(email)) { alert('Please enter a valid email address.'); return; }
+      if (password !== confirmPassword) { alert('Passwords do not match.'); return; }
+
+      const list = DB.getAccounts();
+      if (list.some(function (a) { return a.email.toLowerCase() === email.toLowerCase(); })) { alert('That email is already in use.'); return; }
+      if (list.some(function (a) { return a.username.toLowerCase() === username.toLowerCase(); })) { alert('That username is already in use.'); return; }
+
+      const nextId = list.reduce(function (mx, a) { return Math.max(mx, a.id || 0); }, 0) + 1;
+      list.push({ id: nextId, email: email, username: username, password: password, status: 'active', role: 'nurse' });
+      DB.saveAccounts(list);
+      closeModal(addAccountModal);
+      alert('Account for ' + username + ' created successfully!');
+      renderAccounts();
+    });
+
+    statusFilter.addEventListener('change', renderAccounts);
+
+    /* ====================== SITE TEXT ====================== */
+    const editMissionModal = document.getElementById('editMissionModal');
+    const viewMissionModal = document.getElementById('viewMissionModal');
+    const missionTextarea = document.getElementById('missionTextarea');
+    let currentSection = 'MISSION';
+
+    function openEditModal(key) {
+      currentSection = key;
+      document.getElementById('siteInfoModalTitle').textContent = key;
+      missionTextarea.value = DB.getSite()[key] || '';
+      openModal(editMissionModal);
+    }
+    function openViewModal(key) {
+      currentSection = key;
+      document.getElementById('viewSiteInfoModalTitle').textContent = key;
+      document.getElementById('viewMissionContent').textContent = DB.getSite()[key] || '';
+      openModal(viewMissionModal);
+    }
+    [['About', 'ABOUT'], ['Mission', 'MISSION'], ['Vision', 'VISION'], ['Commitment', 'COMMITMENT']].forEach(function (p) {
+      document.getElementById('edit' + p[0] + 'Btn').addEventListener('click', function () { openEditModal(p[1]); });
+      document.getElementById('view' + p[0] + 'Btn').addEventListener('click', function () { openViewModal(p[1]); });
+    });
+    document.getElementById('cancelMissionBtn').addEventListener('click', function () { closeModal(editMissionModal); });
+    document.getElementById('goBackMissionBtn').addEventListener('click', function () { closeModal(viewMissionModal); });
+    document.getElementById('doneMissionBtn').addEventListener('click', function () {
+      const text = missionTextarea.value.trim();
+      if (!text) { alert('Text cannot be empty.'); return; }
+      const site = DB.getSite();
+      site[currentSection] = text;
+      DB.saveSite(site);
+      alert(currentSection + ' info updated successfully!');
+      closeModal(editMissionModal);
+    });
+
+    /* ====================== SITE IMAGES ====================== */
+    const editImageModal = document.getElementById('editImageModal');
+    const viewImageModal = document.getElementById('viewImageModal');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const uploadDropZone = document.getElementById('uploadDropZone');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    const viewImageDisplay = document.getElementById('viewImageDisplay');
+    const noImageViewText = document.getElementById('noImageViewText');
+
+    const DEFAULT_IMAGES = {
+      'ORGANIZATIONAL CHART': 'images/organizational-chart.png',
+      'PHYSICAL HEALTH': 'images/p1.png',
+      'PSYCHOLOGICAL REFERRAL PROTOCOL': 'images/p2.png'
+    };
+    let activeImageSection = 'ORGANIZATIONAL CHART';
+    let tempImageData = null;
+
+    function resetPreviewState() {
+      imageFileInput.value = '';
+      tempImageData = null;
+      imagePreview.removeAttribute('src');
+      imagePreview.style.display = 'none';
+      previewPlaceholder.style.display = 'block';
+    }
+
+    function processImageFile(file) {
+      if (!file || !file.type.startsWith('image/')) { alert('Please select a valid image file.'); return; }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          /* shrink big images so they fit in browser storage */
+          const MAX = 1600;
+          let data = e.target.result;
+          if (img.width > MAX) {
+            const c = document.createElement('canvas');
+            c.width = MAX; c.height = Math.round(img.height * MAX / img.width);
+            c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+            data = c.toDataURL('image/jpeg', 0.88);
+          }
+          tempImageData = data;
+          imagePreview.src = data;
+          imagePreview.style.display = 'block';
+          previewPlaceholder.style.display = 'none';
+        };
+        img.onerror = function () { alert('That image could not be read.'); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById('triggerFileBtn').addEventListener('click', function (e) { e.stopPropagation(); imageFileInput.click(); });
+    uploadDropZone.addEventListener('click', function (e) {
+      if (e.target.id !== 'triggerFileBtn') imageFileInput.click();
+    });
+    imageFileInput.addEventListener('change', function (e) { if (e.target.files.length) processImageFile(e.target.files[0]); });
+    uploadDropZone.addEventListener('dragover', function (e) { e.preventDefault(); });
+    uploadDropZone.addEventListener('drop', function (e) {
+      e.preventDefault();
+      if (e.dataTransfer.files.length) processImageFile(e.dataTransfer.files[0]);
+    });
+
+    function openEditImageModal(name) {
+      activeImageSection = name;
+      document.getElementById('editImageModalTitle').textContent = name;
+      resetPreviewState();
+      const current = DB.getImages()[name];
+      if (current) {
+        tempImageData = current;
+        imagePreview.src = current;
+        imagePreview.style.display = 'block';
+        previewPlaceholder.style.display = 'none';
+      }
+      openModal(editImageModal);
+    }
+    function openViewImageModal(name) {
+      activeImageSection = name;
+      document.getElementById('viewImageModalTitle').textContent = name;
+      const src = DB.getImages()[name] || DEFAULT_IMAGES[name];
+      noImageViewText.style.display = 'block';
+      viewImageDisplay.style.display = 'none';
+      viewImageDisplay.onload = function () { viewImageDisplay.style.display = 'block'; noImageViewText.style.display = 'none'; };
+      viewImageDisplay.onerror = function () { viewImageDisplay.style.display = 'none'; noImageViewText.style.display = 'block'; };
+      viewImageDisplay.src = src;
+      openModal(viewImageModal);
+    }
+    document.getElementById('editOrgChartBtn').addEventListener('click', function () { openEditImageModal('ORGANIZATIONAL CHART'); });
+    document.getElementById('viewOrgChartBtn').addEventListener('click', function () { openViewImageModal('ORGANIZATIONAL CHART'); });
+    document.getElementById('editPhysicalHealthBtn').addEventListener('click', function () { openEditImageModal('PHYSICAL HEALTH'); });
+    document.getElementById('viewPhysicalHealthBtn').addEventListener('click', function () { openViewImageModal('PHYSICAL HEALTH'); });
+    document.getElementById('editReferralBtn').addEventListener('click', function () { openEditImageModal('PSYCHOLOGICAL REFERRAL PROTOCOL'); });
+    document.getElementById('viewReferralBtn').addEventListener('click', function () { openViewImageModal('PSYCHOLOGICAL REFERRAL PROTOCOL'); });
+
+    document.getElementById('saveImageBtn').addEventListener('click', function () {
+      if (!tempImageData) { alert('Please select an image before saving.'); return; }
+      const imgs = DB.getImages();
+      imgs[activeImageSection] = tempImageData;
+      DB.saveImages(imgs);
+      const stored = DB.getImages()[activeImageSection] === tempImageData;
+      alert(activeImageSection + (stored ? ' image updated successfully!' : ' image updated for this session only (browser storage is full or blocked).'));
+      closeModal(editImageModal);
+    });
+    document.getElementById('cancelImageBtn').addEventListener('click', function () { closeModal(editImageModal); });
+    document.getElementById('goBackImageBtn').addEventListener('click', function () { closeModal(viewImageModal); });
+
+    /* ====================== DRAWER / OTP FLOWS ====================== */
+    const otpModal = document.getElementById('otpModal');
+    const renewEmailModal = document.getElementById('renewEmailModal');
+    const renewPasswordModal = document.getElementById('renewPasswordModal');
+    const newSchoolYearModal = document.getElementById('newSchoolYearModal');
+    let currentActionType = '';
+
+    document.getElementById('openDrawerBtn').addEventListener('click', function () { document.body.classList.toggle('drawer-open'); });
+    document.getElementById('closeDrawerBtn').addEventListener('click', function () { document.body.classList.remove('drawer-open'); });
+
+    function startOtpFlow(type) {
+      currentActionType = type;
+      document.body.classList.remove('drawer-open');
+      document.getElementById('otpCodeInput').value = '';
+      openModal(otpModal);
+      startOtpTimer();
+    }
+    document.getElementById('drawerChangeEmailBtn').addEventListener('click', function () { startOtpFlow('EMAIL'); });
+    document.getElementById('drawerChangePasswordBtn').addEventListener('click', function () { startOtpFlow('PASSWORD'); });
+    document.getElementById('drawerNewSchoolYearBtn').addEventListener('click', function () {
+      document.body.classList.remove('drawer-open');
+      document.getElementById('schoolYearPassword').value = '';
+      openModal(newSchoolYearModal);
+    });
+
+    document.getElementById('cancelOtpBtn').addEventListener('click', function () { stopOtpTimer(); closeModal(otpModal); });
+    document.getElementById('nextOtpBtn').addEventListener('click', function () {
+      const otp = document.getElementById('otpCodeInput').value.trim();
+      if (!/^\d{6}$/.test(otp)) { alert('Please enter the 6-digit OTP code.'); return; }
+      stopOtpTimer();
+      closeModal(otpModal);
+      if (currentActionType === 'EMAIL') openModal(renewEmailModal);
+      else if (currentActionType === 'PASSWORD') openModal(renewPasswordModal);
+    });
+
+    document.getElementById('backRenewEmailBtn').addEventListener('click', function () { closeModal(renewEmailModal); openModal(otpModal); startOtpTimer(); });
+    document.getElementById('doneRenewEmailBtn').addEventListener('click', function () {
+      const a = document.getElementById('newEmailInput').value.trim();
+      const b = document.getElementById('confirmEmailInput').value.trim();
+      if (!a || !b) { alert('Please fill out both email fields.'); return; }
+      if (a !== b) { alert('Emails do not match.'); return; }
+      if (!isEmail(a)) { alert('Please enter a valid email address.'); return; }
+      const list = DB.getAccounts();
+      const me = list.find(function (x) { return getMe() && x.id === getMe().id; });
+      if (!me) { alert('No signed-in administrator account found.'); return; }
+      if (list.some(function (x) { return x.id !== me.id && x.email.toLowerCase() === a.toLowerCase(); })) { alert('That email is already used by another account.'); return; }
+      me.email = a;
+      DB.saveAccounts(list);
+      refreshSession(me);
+      document.getElementById('newEmailInput').value = ''; document.getElementById('confirmEmailInput').value = '';
+      alert('Email renewed successfully!');
+      closeModal(renewEmailModal);
+      renderAccounts();
+    });
+
+    document.getElementById('backRenewPassBtn').addEventListener('click', function () { closeModal(renewPasswordModal); openModal(otpModal); startOtpTimer(); });
+    document.getElementById('doneRenewPassBtn').addEventListener('click', function () {
+      const a = document.getElementById('newPassInput').value;
+      const b = document.getElementById('confirmPassInput').value;
+      if (!a || !b) { alert('Please fill out both password fields.'); return; }
+      if (a !== b) { alert('Passwords do not match.'); return; }
+      const list = DB.getAccounts();
+      const me = list.find(function (x) { return getMe() && x.id === getMe().id; });
+      if (!me) { alert('No signed-in administrator account found.'); return; }
+      me.password = a;
+      DB.saveAccounts(list);
+      document.getElementById('newPassInput').value = ''; document.getElementById('confirmPassInput').value = '';
+      alert('Password renewed successfully!');
+      closeModal(renewPasswordModal);
+    });
+
+    document.getElementById('closeSchoolYearModalBtn').addEventListener('click', function () { closeModal(newSchoolYearModal); });
+    document.getElementById('confirmSchoolYearBtn').addEventListener('click', function () {
+      const pw = document.getElementById('schoolYearPassword').value;
+      if (!pw) { alert('Please enter your administrator password.'); return; }
+      if (!verifyAdminPassword(pw)) { alert('Incorrect administrator password.'); return; }
+      alert('School Year Renewal Processed Successfully!');
+      closeModal(newSchoolYearModal);
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      DB.clearSession();
+      window.location.href = 'index.html';
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(function (m) { m.classList.remove('active'); });
+        document.body.classList.remove('drawer-open');
+        stopOtpTimer();
+      }
+    });
+
+    /* ====================== OTP TIMER ====================== */
+    let otpTimer = null;
+    let countdownSeconds = 50;
+    const timerSecondsSpan = document.getElementById('timerSeconds');
+    const resendOtpBtn = document.getElementById('resendOtpBtn');
+
+    function startOtpTimer() {
+      clearInterval(otpTimer);
+      countdownSeconds = 50;
+      timerSecondsSpan.textContent = countdownSeconds;
+      resendOtpBtn.style.pointerEvents = 'none';
+      resendOtpBtn.style.opacity = '0.6';
+      otpTimer = setInterval(function () {
+        countdownSeconds--;
+        timerSecondsSpan.textContent = Math.max(countdownSeconds, 0);
+        if (countdownSeconds <= 0) {
+          clearInterval(otpTimer);
+          resendOtpBtn.style.pointerEvents = 'auto';
+          resendOtpBtn.style.opacity = '1';
+        }
+      }, 1000);
+    }
+    function stopOtpTimer() { clearInterval(otpTimer); }
+    resendOtpBtn.addEventListener('click', function () {
+      alert('A new OTP code has been sent to your email.');
+      startOtpTimer();
+    });
+
+    renderAccounts();
+  </script>
+
+</body>
+</html>

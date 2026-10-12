@@ -1,0 +1,1452 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #1d2b55;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.topbar {
+    height: 120px;
+    background: #202b64;
+    color: white;
+
+    display: flex;
+    align-items: center;
+
+    padding: 15px 5%;
+    gap: 25px;
+}
+
+
+/* SCHOOL CLINIC BRAND */
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    min-width: 330px;
+}
+
+.brand h1 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.brand p {
+    font-size: 12px;
+    color: #dce4ff;
+}
+
+
+/* LOGO */
+
+.logo {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-ring {
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    border: 4px solid white;
+
+    background: #eaf4ff;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    color: #0757b9;
+}
+
+
+/* =========================
+   NAVIGATION
+   ========================= */
+
+.nav {
+    margin-left: auto;
+
+    background: #0757b9;
+
+    border-radius: 30px;
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+}
+
+.nav a {
+    color: white;
+    text-decoration: none;
+
+    padding: 20px 25px;
+
+    font-size: 15px;
+    text-align: center;
+
+    transition: 0.2s;
+}
+
+.nav a:hover {
+    background: #0b65d2;
+}
+
+
+/* =========================
+   HERO SECTION
+   ========================= */
+
+.hero {
+    min-height: 205px;
+
+    background: linear-gradient(
+        120deg,
+        #c8e9fb,
+        #a8dcfa,
+        #73c2f1
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+.hero-content {
+    width: 100%;
+    max-width: 1100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 80px;
+}
+
+
+/* HERO TEXT */
+
+.hero-copy {
+    text-align: center;
+}
+
+.welcome {
+    font-size: 32px;
+    font-weight: 900;
+
+    color: white;
+
+    text-shadow:
+        5px 5px 0 #536171;
+}
+
+.hero h2 {
+    font-size: 75px;
+    font-weight: 900;
+
+    color: white;
+
+    letter-spacing: -3px;
+
+    text-shadow:
+        7px 7px 0 #506073;
+}
+
+.tagline {
+    margin-top: 15px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    color: white;
+
+    text-shadow: none;
+}
+
+.tagline span {
+    color: #0757b9;
+}
+
+
+/* HERO SIDE TEXT */
+
+.hero-side-title {
+    display: flex;
+    flex-direction: column;
+
+    font-family: Georgia, serif;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    line-height: 1;
+    color: #263a77;
+
+    text-shadow: none;
+}
+
+
+/* =========================
+   SERVICES
+   ========================= */
+
+.services {
+    min-height: 280px;
+
+    background: white;
+
+    position: relative;
+
+    padding: 45px 8%;
+}
+
+
+/* SERVICE GRID */
+
+.service-grid {
+    width: 650px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 30px 90px;
+}
+
+
+/* SERVICE BUTTON */
+
+.service-card {
+    border: none;
+
+    background: #0757b9;
+
+    color: white;
+
+    min-height: 52px;
+
+    border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        30px 20px 0 rgba(30, 30, 30, 0.65);
+
+    transition: 0.2s;
+}
+
+.service-card:hover {
+    background: #0b65d2;
+
+    transform: translateY(-4px);
+}
+
+.service-icon {
+    font-size: 25px;
+}
+
+
+/* THIRD SERVICE */
+
+.service-card:nth-child(3) {
+    width: 250px;
+
+    margin-left: 150px;
+}
+
+
+/* =========================
+   DOCTOR ILLUSTRATION
+   ========================= */
+
+.illustration {
+    position: absolute;
+
+    right: 8%;
+    bottom: 0;
+
+    width: 280px;
+    height: 210px;
+}
+
+
+/* PATIENT */
+
+.patient {
+    position: absolute;
+
+    left: 10px;
+    bottom: 0;
+
+    width: 120px;
+    height: 190px;
+}
+
+.patient-head {
+    position: absolute;
+
+    top: 0;
+    left: 25px;
+
+    width: 70px;
+    height: 75px;
+
+    background: #f5c08f;
+
+    border-radius: 50%;
+}
+
+.hair {
+    position: absolute;
+
+    top: -8px;
+    left: -5px;
+
+    width: 80px;
+    height: 40px;
+
+    background: #0a2a61;
+
+    border-radius: 50%;
+}
+
+.patient-body {
+    position: absolute;
+
+    top: 80px;
+    left: 5px;
+
+    width: 115px;
+    height: 110px;
+
+    background: #1d5c9f;
+
+    border-radius: 50px 50px 10px 10px;
+}
+
+.patient-arm {
+    position: absolute;
+
+    right: -10px;
+    top: 90px;
+
+    width: 35px;
+    height: 105px;
+
+    background: #f2bd89;
+
+    border-radius: 30px;
+
+    transform: rotate(-15deg);
+}
+
+
+/* DOCTOR */
+
+.doctor {
+    position: absolute;
+
+    right: 10px;
+    bottom: 0;
+
+    width: 140px;
+    height: 210px;
+}
+
+.doctor-head {
+    position: absolute;
+
+    top: 0;
+    left: 35px;
+
+    width: 73px;
+    height: 75px;
+
+    background: #f4c291;
+
+    border-radius: 50%;
+}
+
+.doctor-hair {
+    position: absolute;
+
+    top: -12px;
+    left: -3px;
+
+    width: 82px;
+    height: 55px;
+
+    background: #09275c;
+
+    border-radius: 50%;
+}
+
+.coat {
+    position: absolute;
+
+    top: 80px;
+    left: 10px;
+
+    width: 125px;
+    height: 130px;
+
+    background: white;
+
+    border-radius: 55px 55px 0 0;
+
+    border: 2px solid #dce7f2;
+}
+
+.doctor-arm {
+    position: absolute;
+
+    left: -5px;
+    top: 100px;
+
+    width: 35px;
+    height: 95px;
+
+    background: #f0bc89;
+
+    border-radius: 30px;
+
+    transform: rotate(25deg);
+}
+
+
+/* =========================
+   LOGIN BUTTON
+   ========================= */
+
+.login-button {
+    position: absolute;
+
+    right: 7%;
+    bottom: 10px;
+
+    background: #202b64;
+
+    color: white;
+
+    border: none;
+
+    padding: 13px 25px;
+
+    border-radius: 12px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 3px 0 #11183e;
+
+    transition: 0.2s;
+}
+
+.login-button:hover {
+    background: #0757b9;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   INFORMATION SECTIONS
+   ========================= */
+
+.info-section {
+    min-height: 300px;
+
+    padding: 70px 10%;
+
+    display: flex;
+    align-items: center;
+
+    background: white;
+}
+
+.info-section.alternate {
+    background: #eef5ff;
+}
+
+.info-section > div {
+    max-width: 700px;
+}
+
+.eyebrow {
+    color: #0757b9;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 10px;
+}
+
+.info-section h3 {
+    font-size: 40px;
+
+    margin-bottom: 20px;
+}
+
+.info-section p:not(.eyebrow) {
+    color: #667085;
+
+    line-height: 1.8;
+
+    font-size: 16px;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+footer {
+    min-height: 80px;
+
+    padding: 25px 8%;
+
+    background: #202b64;
+
+    color: #dce4ff;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer span:first-child {
+    color: white;
+
+    font-weight: bold;
+}
+
+/* Footer links */
+footer a {
+    color: #dce4ff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 800px) {
+
+    .topbar {
+        height: auto;
+
+        padding: 15px;
+
+        flex-direction: column;
+    }
+
+    .brand {
+        min-width: auto;
+    }
+
+    .nav {
+        width: 100%;
+
+        flex-direction: column;
+
+        border-radius: 15px;
+    }
+
+    .nav a {
+        width: 100%;
+
+        text-align: center;
+
+        padding: 13px;
+    }
+
+
+    /* HERO */
+
+    .hero {
+        padding: 35px 15px;
+    }
+
+    .hero-content {
+        flex-direction: column;
+
+        gap: 20px;
+    }
+
+    .welcome {
+        font-size: 25px;
+    }
+
+    .hero h2 {
+        font-size: 50px;
+    }
+
+    .hero-side-title {
+        display: none;
+    }
+
+
+    /* SERVICES */
+
+    .services {
+        padding: 40px 20px 100px;
+    }
+
+    .service-grid {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 25px;
+    }
+
+    .service-card,
+    .service-card:nth-child(3) {
+        width: 90%;
+
+        margin: auto;
+    }
+
+    .illustration {
+        opacity: 0.3;
+
+        right: -40px;
+    }
+
+
+    /* INFORMATION */
+
+    .info-section {
+        padding: 55px 25px;
+    }
+
+    .info-section h3 {
+        font-size: 30px;
+    }
+
+
+    /* FOOTER */
+
+    footer {
+        flex-direction: column;
+
+        gap: 10px;
+
+        text-align: center;
+    }
+  .organizational-chart-image {
+    display: block;
+    width: 80%;
+    max-width: 900px;
+    height: auto;
+    margin: 40px auto 0;
+    
+}
+/* If you have something like this in your CSS, it overrides Flexbox: */
+/* Protocol Images Layout */
+.protocol-images {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.protocol-images img {
+  width: 48% !important;
+  height: auto !important;
+  display: block;
+}
+}
+/* Line 711 closes the media query */
+
+
+/* PLACE YOUR CODE BELOW LINE 711 HERE */
+.protocol-images {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.protocol-images img {
+  width: 48% !important;
+  height: auto !important;
+}
+.mission-img {
+  width: 160%;
+  max-width: 800px; /* Adjust this value (e.g., 300px, 400px, 500px) to make it smaller */
+  height: auto;
+  display: block;
+  margin: 0 auto;   /* Centers the image horizontally */
+}
+/* =========================
+   LOGIN POPUPS
+   ========================= */
+
+/* Hide all login popups by default */
+.login-popup {
+    display: none;
+    
+    position: fixed;
+    inset: 0;
+    
+    background: rgba(0, 0, 0, 0.5);
+    
+    align-items: center;
+    justify-content: center;
+    
+    z-index: 9999;
+}
+
+/* Show popup when JavaScript adds "show" */
+.login-popup.show {
+    display: flex;
+}
+
+/* Login box */
+.login-panel {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 400px;
+    max-width: 90%;
+    
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.login-panel h2 {
+    color: #202b64;
+    margin-bottom: 10px;
+}
+
+.login-panel label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #202b64;
+    font-weight: bold;
+}
+
+.login-panel input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+/* Password input + eye button */
+.password-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.password-wrap input {
+    flex: 1;
+}
+
+.eye-btn {
+    margin-left: 5px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+/* Forgot password link */
+.forgot-link {
+    display: block;
+    margin-top: 15px;
+    color: #0757b9;
+    font-weight: bold;
+}
+
+/* Buttons */
+.login-actions,
+.forgot-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.login-actions button,
+.forgot-actions button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.cancel-btn,
+.back-btn {
+    background: #ddd;
+}
+
+.submit-btn,
+.next-btn,
+.done-btn {
+    background: #202b64;
+    color: white;
+}
+/* =========================================
+   LOGIN / FORGOT / RENEW PASSWORD POPUPS
+   ========================================= */
+
+   .login-popup {
+    display: none;
+
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.50);
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+}
+
+.login-popup.show {
+    display: flex;
+}
+
+
+/* =========================================
+   LOGIN BOX
+   ========================================= */
+
+.login-panel {
+    position: relative;
+
+    width: 540px;
+    max-width: 90%;
+
+    padding: 40px 45px 45px;
+
+    background: #9db4d0;
+
+    border: 8px solid #202b64;
+
+    border-radius: 18px;
+
+    box-shadow: 0 5px 0 #11183e;
+
+    color: #172653;
+}
+
+
+/* =========================================
+   CLOSE BUTTON
+   ========================================= */
+
+.close-login {
+    position: absolute;
+
+    top: 12px;
+    right: 18px;
+
+    width: 35px;
+    height: 35px;
+
+    border: none;
+    background: transparent;
+
+    color: #111;
+
+    font-size: 32px;
+    font-weight: bold;
+
+    line-height: 30px;
+
+    cursor: pointer;
+}
+
+.close-login:hover {
+    color: #0757b9;
+}
+
+
+/* =========================================
+   TITLE
+   ========================================= */
+
+.login-panel h2 {
+    margin: 0;
+
+    text-align: center;
+
+    font-size: 48px;
+    font-weight: 900;
+
+    color: #202b64;
+}
+
+
+/* UNDERLINE */
+
+.login-underline {
+    width: 80%;
+
+    height: 3px;
+
+    background: #111;
+
+    margin: 10px auto 38px;
+}
+
+
+/* =========================================
+   LABELS
+   ========================================= */
+
+.login-panel label {
+    display: block;
+
+    margin-top: 18px;
+    margin-bottom: 7px;
+
+    color: #172653;
+
+    font-size: 17px;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   INPUTS
+   ========================================= */
+
+.login-panel input {
+    width: 100%;
+
+    height: 45px;
+
+    padding: 8px 12px;
+
+    background: #fff;
+
+    border: 2px solid #111;
+
+    border-radius: 0;
+
+    font-size: 17px;
+
+    outline: none;
+}
+
+.login-panel input:focus {
+    border-color: #0757b9;
+}
+
+
+/* =========================================
+   PASSWORD
+   ========================================= */
+
+.password-wrap {
+    display: flex;
+
+    width: 100%;
+}
+
+.password-wrap input {
+    flex: 1;
+}
+
+.eye-btn {
+    width: 45px;
+
+    margin-left: -45px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #555;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   FORGOT PASSWORD
+   ========================================= */
+
+.forgot-link {
+    display: block;
+
+    margin-top: 18px;
+
+    color: #111;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.forgot-link:hover {
+    color: #0757b9;
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+.login-actions,
+.forgot-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 24px;
+
+    margin-top: 35px;
+}
+
+.login-actions button,
+.forgot-actions button {
+    min-width: 175px;
+
+    height: 63px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #283477;
+
+    color: white;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    text-decoration: underline;
+
+    cursor: pointer;
+
+    box-shadow: none;
+
+    transition: 0.2s;
+}
+
+.login-actions button:hover,
+.forgot-actions button:hover {
+    background: #0757b9;
+
+    transform: translateY(-2px);
+}
+
+
+/* CANCEL BUTTON */
+
+.cancel-btn {
+    background: #283477;
+}
+
+
+/* LOGIN BUTTON */
+
+.submit-btn {
+    background: #283477;
+}
+
+
+/* =========================================
+   FORGOT PASSWORD
+   ========================================= */
+
+.forgot-panel {
+    padding-bottom: 40px;
+}
+
+.forgot-instruction {
+    color: #172653;
+
+    font-size: 16px;
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   RENEW PASSWORD
+   ========================================= */
+
+.renew-panel {
+    padding-bottom: 40px;
+}
+
+.renew-panel label {
+    margin-top: 20px;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .login-panel {
+        width: 92%;
+
+        padding: 30px 25px 30px;
+
+        border-width: 6px;
+    }
+
+    .login-panel h2 {
+        font-size: 35px;
+    }
+
+    .login-underline {
+        width: 90%;
+    }
+
+    .login-actions,
+    .forgot-actions {
+        gap: 10px;
+    }
+
+    .login-actions button,
+    .forgot-actions button {
+        min-width: 0;
+        width: 50%;
+
+        font-size: 17px;
+    }
+}
+/* =========================
+   SCHOOL LOGO
+   ========================= */
+
+   .logo-icon {
+    width: 65px;
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.school-logo {
+    width: 75px !important;
+    height: 75px !important;
+
+    max-width: 80px !important;
+    max-height: 80px !important;
+
+    object-fit: contain;
+    display: block;
+}
+
+/* Brand positioning */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    min-width: 280px;
+}
+/* =========================
+   ABOUT US + SERVICES
+   SIDE-BY-SIDE FRAMES
+   ========================= */
+
+   .info-container {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: 30px;
+
+    width: 90%;
+    max-width: 1200px;
+
+    margin: 40px auto;
+}
+
+.info-section {
+    flex: 1;
+
+    min-height: 280px;
+
+    margin: 0;
+    padding: 35px;
+
+    background: #f8fbff;
+
+    border: 3px solid #202b64;
+    border-radius: 18px;
+
+    box-shadow: 7px 7px 0 #b8c9df;
+
+    display: flex;
+    align-items: flex-start;
+}
+
+.info-section > div {
+    width: 100%;
+    max-width: none;
+}
+
+.info-section h3 {
+    font-size: 32px;
+    color: #202b64;
+
+    margin-bottom: 15px;
+}
+
+.info-section p:not(.eyebrow) {
+    color: #667085;
+
+    line-height: 1.7;
+
+    font-size: 15px;
+}
+.organizational-chart-image {
+    display: block;
+    width: 80%;
+    max-width: 900px;
+    height: auto;
+    margin: 40px auto;
+}
+/* ================================
+   MISSION, VISION & COMMITMENT
+   ================================ */
+
+   #mission .mission-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+#mission .mission-container h3 {
+    font-size: 40px;
+    color: #202b64;
+    margin-bottom: 25px;
+}
+
+#mission .mission-boxes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 25px;
+}
+
+#mission .mission-box {
+    background: white;
+    border: 3px solid #202b64;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 7px 7px 0 #b8c9df;
+}
+
+#mission .mission-box h4 {
+    color: #0757b9;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+#mission .mission-box p {
+    color: #667085;
+    line-height: 1.7;
+    font-size: 15px;
+    margin: 0;
+}
+
+/* MOBILE */
+@media (max-width: 800px) {
+    #mission .mission-boxes {
+        grid-template-columns: 1fr;
+    }
+}
+.services-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.service-item {
+    padding: 20px;
+    background: white;
+    border: 2px solid #d5e2f2;
+    border-radius: 15px;
+}
+
+.service-title {
+    color: #202b64;
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+.service-item p {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+@media (max-width: 800px) {
+    .services-list {
+        grid-template-columns: 1fr;
+    }
+}
+/* =====================================
+   ABOUT US + OUR SERVICES
+   ===================================== */
+
+   .info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.info-container .info-section {
+    width: 100%;
+    min-height: 280px;
+    margin: 0;
+    padding: 40px;
+    background: #f8fbff;
+    border: 3px solid #202b64;
+    border-radius: 18px;
+    box-shadow: 7px 7px 0 #b8c9df;
+}
+
+.info-container .info-section > div {
+    width: 100%;
+    max-width: none;
+}
+
+.about-info {
+    min-height: 250px;
+}
+
+.services-info {
+    min-height: 400px;
+}
+
+.services-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.service-item {
+    padding: 20px;
+    background: white;
+    border: 2px solid #d5e2f2;
+    border-radius: 15px;
+}
+
+.service-title {
+    color: #202b64;
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+.service-item p {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+@media (max-width: 800px) {
+
+    .info-container {
+        width: 92%;
+    }
+
+    .info-container .info-section {
+        padding: 30px 20px;
+    }
+
+    .services-list {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* =========================
+   FORM MESSAGES
+   ========================= */
+.form-msg {
+    min-height: 20px;
+    margin-top: 10px;
+    color: #8a0010;
+    font-size: 14px;
+    font-weight: bold;
+}
+.form-msg.ok { color: #0b5d1e; }
